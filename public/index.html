@@ -23,7 +23,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 40px
 .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#ff8c00);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
 .logo span{color:var(--gold);}
 .nav-center{display:flex;gap:5px;}
-.nav-link{padding:8px 16px;border-radius:8px;color:var(--muted);font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;border:none;background:none;}
+.nav-link{padding:8px 16px;border-radius:8px;color:var(--muted);font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;border:none;background:none;text-decoration:none;color:var(--muted);}
 .nav-link:hover,.nav-link.active{color:var(--text);background:var(--card2);}
 .nav-right{display:flex;align-items:center;gap:10px;}
 .nav-username{font-size:0.85rem;font-weight:600;color:var(--gold);background:rgba(240,165,0,0.1);padding:5px 12px;border-radius:20px;cursor:pointer;transition:all 0.2s;}
@@ -37,6 +37,94 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 40px
 .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
 .btn-logout{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
 .btn-logout:hover{background:rgba(255,71,87,0.2);}
+
+/* MOBILE NAVBAR */
+.mobile-menu-toggle{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:5px;}
+.mobile-menu-toggle span{width:25px;height:3px;background:var(--text);border-radius:2px;transition:all 0.3s;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--card2);border-bottom:1px solid var(--border);z-index:199;max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+.mobile-menu.active{max-height:400px;}
+.mobile-nav-links{display:flex;flex-direction:column;padding:20px;}
+.mobile-nav-links a{display:block;padding:15px 20px;color:var(--text);text-decoration:none;font-weight:500;border-radius:8px;margin-bottom:10px;transition:all 0.2s;}
+.mobile-nav-links a:hover{background:var(--card);color:var(--gold);}
+.mobile-nav-actions{display:flex;flex-direction:column;padding:0 20px 20px;gap:10px;}
+.mobile-nav-actions .btn{width:100%;justify-content:center;text-align:center;}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:0 20px;height:60px;}
+  .nav-center{display:none;}
+  .mobile-menu-toggle{display:flex;}
+  .mobile-menu{display:block;}
+  .nav-right{display:none;}
+  .logo{font-size:1.1rem;}
+  .logo-icon{width:32px;height:32px;}
+  
+  /* HERO MOBILE */
+  .hero{padding:60px 20px 40px;}
+  .hero h1{font-size:2rem;}
+  .hero p{font-size:0.95rem;}
+  .hero-ctas{flex-direction:column;gap:12px;}
+  .btn-hero-primary,.btn-hero-secondary{width:100%;max-width:300px;}
+  
+  /* STATS BAR MOBILE */
+  .stats-bar{grid-template-columns:repeat(2,1fr);gap:1px;}
+  .stat-item{padding:15px 10px;}
+  .stat-num{font-size:1.4rem;}
+  .stat-lab{font-size:0.7rem;}
+  
+  /* MAIN LAYOUT MOBILE */
+  .main{grid-template-columns:1fr;padding:20px 16px;}
+  .sidebar{display:none;}
+  
+  /* SECTION TITLES MOBILE */
+  .sec-title{flex-direction:column;gap:10px;align-items:flex-start;}
+  .sec-title h3{font-size:0.9rem;}
+  
+  /* PRONO CARDS MOBILE */
+  .prono-card{padding:15px;}
+  .card-match{font-size:0.9rem;}
+  .card-prono{font-size:0.8rem;}
+  .card-analyse{font-size:0.75rem;}
+  
+  /* VIP SECTIONS MOBILE */
+  .vip-bonus-grid{grid-template-columns:1fr;gap:15px;}
+  .bonus-card{padding:15px;}
+  .bonus-icon{width:40px;height:40px;font-size:1.5rem;}
+  .performance-grid{grid-template-columns:repeat(2,1fr);gap:15px;}
+  .perf-card{padding:20px;}
+  .perf-number{font-size:2rem;}
+  .testimonials-grid{grid-template-columns:1fr;gap:15px;}
+  
+  /* MODAL MOBILE */
+  .modal-bg{padding:10px;}
+  .modal{padding:25px 20px;}
+  .modal h3{font-size:1rem;}
+  .modal p{font-size:0.8rem;}
+  
+  /* LOCK BOX MOBILE */
+  .lock-box{padding:30px 20px;}
+  .price-amount{font-size:2rem;}
+  
+  /* FILTERS MOBILE */
+  .filters-section{grid-template-columns:1fr;gap:12px;}
+  .filter-group select,.filter-group input{padding:10px;}
+  
+  /* HISTORY MOBILE */
+  .history-card{padding:15px;}
+  .history-match{font-size:0.9rem;}
+  .history-prono{font-size:0.85rem;}
+  .history-details{flex-direction:column;gap:8px;font-size:0.8rem;}
+  
+  /* PAGINATION MOBILE */
+  .pagination{flex-direction:column;gap:15px;}
+  .pagination button{width:100%;max-width:200px;}
+  
+  /* ADMIN MOBILE */
+  .admin-form{grid-template-columns:1fr;}
+  .admin-form .full{grid-column:span 1;}
+  .admin-table{font-size:0.7rem;}
+  .admin-table th,.admin-table td{padding:8px 6px;}
+}
 
 /* HERO */
 .hero{position:relative;padding:80px 40px 60px;text-align:center;overflow:hidden;}
@@ -464,7 +552,34 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
       <button class="btn btn-logout" onclick="logout()">Déconnexion</button>
     </div>
   </div>
+  
+  <!-- Mobile Menu Toggle -->
+  <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-nav-links">
+    <a href="/" class="nav-link">Accueil</a>
+    <a href="/" class="nav-link">Stats</a>
+    <a href="/history" class="nav-link">Historique</a>
+  </div>
+  <div class="mobile-nav-actions">
+    <span class="nav-username" id="mobile-nav-username" style="display:none" onclick="openModal('modal-profile')"></span>
+    <div id="mobile-nav-guest" style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-outline" onclick="openModal('modal-login')">Connexion</button>
+      <button class="btn btn-vip" onclick="openModal('modal-register')">S'inscrire</button>
+    </div>
+    <div id="mobile-nav-user" style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-outline" id="mobile-btn-portal" style="display:none" onclick="openCustomerPortal()">⚙️ Mon abonnement</button>
+      <button class="btn btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+</div>
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">🔥 Saison 2025/2026 en cours</div>
@@ -1022,9 +1137,15 @@ function loadUserProfile() {
   const user = TOKEN ? parseJWT(TOKEN) : null;
   if (!user) return;
 
-  // Mettre à jour les informations du profil
+  // Mettre à jour les informations du profil (desktop)
   document.getElementById('profile-username').textContent = user.username || 'Utilisateur';
   document.getElementById('profile-email').textContent = user.email || '';
+  
+  // Mettre à jour la navbar desktop
+  document.getElementById('nav-username').textContent = '👤 ' + user.username;
+  
+  // Mettre à jour la navbar mobile
+  document.getElementById('mobile-nav-username').textContent = '👤 ' + user.username;
   
   // Statut VIP
   const statusElement = document.getElementById('profile-status');
@@ -1040,6 +1161,10 @@ function loadUserProfile() {
     statusTextElement.textContent = 'Membre VIP';
     upgradeBtn.style.display = 'none';
     manageBtn.style.display = 'block';
+    
+    // Afficher les boutons VIP dans les navbars
+    document.getElementById('btn-portal').style.display = 'inline-block';
+    document.getElementById('mobile-btn-portal').style.display = 'block';
   } else {
     statusElement.style.background = 'rgba(240,165,0,0.1)';
     statusElement.style.color = 'var(--gold)';
@@ -1048,11 +1173,37 @@ function loadUserProfile() {
     statusTextElement.textContent = 'Membre Standard';
     upgradeBtn.style.display = 'block';
     manageBtn.style.display = 'none';
+    
+    // Cacher les boutons VIP dans les navbars
+    document.getElementById('btn-portal').style.display = 'none';
+    document.getElementById('mobile-btn-portal').style.display = 'none';
   }
   
   // Date d'inscription
   const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'Aujourd\'hui';
   document.getElementById('profile-member-since').textContent = joinDate;
+  
+  // Mettre à jour les éléments mobiles
+  document.getElementById('nav-guest').style.display = 'none';
+  document.getElementById('nav-user').style.display = 'flex';
+  document.getElementById('mobile-nav-guest').style.display = 'none';
+  document.getElementById('mobile-nav-user').style.display = 'flex';
+  document.getElementById('nav-username').style.display = 'inline-block';
+  document.getElementById('mobile-nav-username').style.display = 'block';
+}
+
+// Fonction pour le menu mobile
+function toggleMobileMenu() {
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileMenu.classList.toggle('active');
+  
+  // Fermer le menu quand on clique sur un lien
+  const links = mobileMenu.querySelectorAll('a');
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+    });
+  });
 }
 
 function showToast(msg, type = 'info') {
