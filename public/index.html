@@ -700,7 +700,13 @@ function logout() {
 function goToStripe() {
   closeModal('modal-payment');
   showToast('🔄 Redirection vers Stripe...', 'info');
-  setTimeout(() => { window.location.href = '/api/payment/create-checkout'; }, 1000);
+  
+  // Créer un formulaire pour faire un POST
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/api/payment/create-checkout';
+  document.body.appendChild(form);
+  form.submit();
 }
 
 function showToast(msg, type = 'info') {
