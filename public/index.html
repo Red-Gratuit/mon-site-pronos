@@ -837,6 +837,7 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
     <div class="tabs">
       <button class="tab active" onclick="showTab('tab-add',this)">➕ Nouveau prono</button>
       <button class="tab" onclick="showTab('tab-manage',this)">📋 Gérer les pronos</button>
+      <button class="tab" onclick="showTab('tab-live',this)">⚡ Matchs live</button>
     </div>
     <div id="tab-add">
       <div class="admin-form">
@@ -866,6 +867,37 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
     <div id="tab-manage" style="display:none">
       <div id="admin-table-wrap">
         <div class="empty-state"><div class="empty-icon">📋</div><p>Aucun prono publié pour le moment.</p></div>
+      </div>
+    </div>
+    <div id="tab-live" style="display:none">
+      <div style="margin-bottom:20px;">
+        <h4 style="margin-bottom:15px;">➕ Ajouter un match live</h4>
+        <div class="admin-form">
+          <input type="text" id="live-home" placeholder="Équipe domicile (ex : PSG)"/>
+          <input type="text" id="live-away" placeholder="Équipe extérieur (ex : OM)"/>
+          <input type="number" id="live-score-home" placeholder="Score domicile" min="0"/>
+          <input type="number" id="live-score-away" placeholder="Score extérieur" min="0"/>
+          <input type="number" id="live-minute" placeholder="Minute (ex : 75)" min="0" max="120"/>
+          <select id="live-status">
+            <option value="LIVE">🔴 LIVE</option>
+            <option value="HT">⏸️ MI-TEMPS</option>
+            <option value="FT">🏁 TERMINÉ</option>
+            <option value="POSTPONED">⏸️ REPORTÉ</option>
+          </select>
+          <input type="text" id="live-league" placeholder="Compétition (ex : Ligue 1)"/>
+          <button class="btn-publish full" onclick="addLiveMatch()">⚡ Ajouter le match</button>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:20px;">
+        <h4 style="margin-bottom:15px;">📋 Matchs en cours</h4>
+        <div id="live-matches-admin">
+          <div class="empty-state"><div class="empty-icon">⚡</div><p>Aucun match live pour le moment.</p></div>
+        </div>
+      </div>
+      
+      <div style="text-align:center;">
+        <button class="btn-outline" onclick="clearAllLiveMatches()">🗑️ Vider tous les matchs</button>
       </div>
     </div>
   </div>
@@ -1606,6 +1638,169 @@ function refreshLiveMatches() {
   loadLiveMatches();
 }
 
+// Gestion des matchs live (admin)
+async function addLiveMatch() {
+  try {
+    const matchData = {
+      homeTeam: document.getElementById('live-home').value,
+      awayTeam: document.getElementById('live-away').value,
+      scoreHome: document.getElementById('live-score-home').value,
+      scoreAway: document.getElementById('live-score-away').value,
+      minute: document.getElementById('live-minute').value,
+      status: document.getElementById('live-status').value,
+      league: document.getElementById('live-league').value
+    };
+
+    const res = await fetch(`${API}/api/live-matches/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(matchData)
+    });
+
+    if (res.ok) {
+      showToast('✅ Match live ajouté !', 'success');
+      // Vider le formulaire
+      ['live-home', 'live-away', 'live-score-home', 'live-score-away', 'live-minute', 'live-league'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('live-status').value = 'LIVE';
+      
+      // Rafraîchir les listes
+      loadLiveMatches();
+      loadLiveMatchesAdmin();
+    } else {
+      const err = await res.json();
+      showToast('❌ ' + err.error, 'error');
+    }
+  } catch(e) { 
+    showToast('❌ Erreur serveur', 'error'); 
+  }
+}
+
+// Charger les matchs live pour l'admin
+async function loadLiveMatchesAdmin() {
+  try {
+    const res = await fetch(`${API}/api/live-matches`);
+    const matches = await res.json();
+    
+    const container = document.getElementById('live-matches-admin');
+    
+    if (!matches.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚡</div>
+          <p>Aucun match live pour le moment.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = `
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Match</th>
+              <th>Score</th>
+              <th>Statut</th>
+              <th>Minute</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${matches.map(match => `
+              <tr>
+                <td>${match.teams.home} vs ${match.teams.away}</td>
+                <td>${match.score.home} - ${match.score.away}</td>
+                <td>${match.status}</td>
+                <td>${match.minute ? match.minute + "'" : '-'}</td>
+                <td>
+                  <button class="a-btn a-win" onclick="editLiveMatch('${match.id}')">✏️</button>
+                  <button class="a-btn a-del" onclick="deleteLiveMatch('${match.id}')">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Erreur chargement matchs admin:', error);
+  }
+}
+
+// Supprimer un match live
+async function deleteLiveMatch(id) {
+  if (!confirm('Supprimer ce match live ?')) return;
+  
+  try {
+    const res = await fetch(`${API}/api/live-matches/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (res.ok) {
+      showToast('🗑️ Match supprimé', 'info');
+      loadLiveMatches();
+      loadLiveMatchesAdmin();
+    }
+  } catch (error) {
+    showToast('❌ Erreur', 'error');
+  }
+}
+
+// Vider tous les matchs live
+async function clearAllLiveMatches() {
+  if (!confirm('Vider TOUS les matchs live ? Cette action est irréversible.')) return;
+  
+  try {
+    const res = await fetch(`${API}/api/live-matches`, {
+      method: 'DELETE'
+    });
+    
+    if (res.ok) {
+      showToast('🗑️ Tous les matchs ont été supprimés', 'info');
+      loadLiveMatches();
+      loadLiveMatchesAdmin();
+    }
+  } catch (error) {
+    showToast('❌ Erreur', 'error');
+  }
+}
+
+// Modifier un match live (simple version)
+function editLiveMatch(id) {
+  const newScoreHome = prompt('Nouveau score domicile :');
+  const newScoreAway = prompt('Nouveau score extérieur :');
+  const newMinute = prompt('Nouvelle minute :');
+  
+  if (newScoreHome !== null && newScoreAway !== null) {
+    updateLiveMatch(id, newScoreHome, newScoreAway, newMinute);
+  }
+}
+
+// Mettre à jour un match live
+async function updateLiveMatch(id, scoreHome, scoreAway, minute) {
+  try {
+    const res = await fetch(`${API}/api/live-matches/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scoreHome: parseInt(scoreHome),
+        scoreAway: parseInt(scoreAway),
+        minute: minute ? parseInt(minute) : null
+      })
+    });
+    
+    if (res.ok) {
+      showToast('✅ Match mis à jour', 'success');
+      loadLiveMatches();
+      loadLiveMatchesAdmin();
+    }
+  } catch (error) {
+    showToast('❌ Erreur', 'error');
+  }
+}
+
 // Variables globales pour l'historique
 let currentPage = 1;
 let currentFilters = {};
@@ -1769,10 +1964,17 @@ function updateStatsBar(stats) {
 }
 
 function showTab(id, btn) {
-  ['tab-add','tab-manage'].forEach(t => document.getElementById(t).style.display = 'none');
+  ['tab-add','tab-manage','tab-live'].forEach(t => document.getElementById(t).style.display = 'none');
   document.getElementById(id).style.display = 'block';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
+  
+  // Charger les données spécifiques au tab
+  if (id === 'tab-live') {
+    loadLiveMatchesAdmin();
+  } else if (id === 'tab-manage') {
+    loadAdminTable();
+  }
 }
 async function login(email, password) {
   try {
