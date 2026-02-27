@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const User = require('../models/User');
 
 // Route pour créer une session de paiement Stripe
 router.post('/create-checkout', async (req, res) => {
@@ -44,8 +45,25 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       
       // Mettre à jour le statut VIP de l'utilisateur
       if (session.customer_email) {
-        // Ici vous devriez mettre à jour votre base de données
-        console.log(`Utilisateur ${session.customer_email} devient VIP`);
+        try {
+          const user = await User.findOneAndUpdate(
+            { email: session.customer_email },
+            { 
+              isVIP: true,
+              stripeCustomerId: session.customer,
+              stripeSubId: session.subscription
+            },
+            { new: true }
+          );
+          
+          if (user) {
+            console.log(`✅ Utilisateur ${user.email} est maintenant VIP !`);
+          } else {
+            console.log(`⚠️ Utilisateur ${session.customer_email} non trouvé`);
+          }
+        } catch (error) {
+          console.error('Erreur mise à jour VIP:', error);
+        }
       }
       break;
       
@@ -54,8 +72,22 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       console.log('Abonnement annulé:', subscription.id);
       
       // Retirer le statut VIP
-      if (subscription.customer_email) {
-        console.log(`Utilisateur ${subscription.customer_email} n'est plus VIP`);
+      try {
+        const user = await User.findOneAndUpdate(
+          { stripeSubId: subscription.id },
+          { 
+            isVIP: false,
+            stripeCustomerId: null,
+            stripeSubId: null
+          },
+          { new: true }
+        );
+        
+        if (user) {
+          console.log(`❌ Utilisateur ${user.email} n'est plus VIP`);
+        }
+      } catch (error) {
+        console.error('Erreur retrait VIP:', error);
       }
       break;
       
