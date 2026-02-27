@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PronoElite ⚽</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --gold:#f0a500;--dark:#080b12;--card:#0e1220;--card2:#131826;
+  --border:#1e2538;--text:#e8eaf0;--muted:#5a6380;
+  --green:#00c97a;--red:#ff4757;--blue:#4f8ef7;--purple:#8b5cf6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
+
+/* NAVBAR */
+nav{display:flex;justify-content:space-between;align-items:center;padding:0 40px;height:64px;background:rgba(8,11,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:800;letter-spacing:-0.5px;text-decoration:none;color:var(--text);}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#ff8c00);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.logo span{color:var(--gold);}
+.nav-center{display:flex;gap:5px;}
+.nav-link{padding:8px 16px;border-radius:8px;color:var(--muted);font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;border:none;background:none;}
+.nav-link:hover,.nav-link.active{color:var(--text);background:var(--card2);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-username{font-size:0.85rem;font-weight:600;color:var(--gold);background:rgba(240,165,0,0.1);padding:5px 12px;border-radius:20px;}
+.btn{padding:8px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all 0.2s;}
+.btn-google{background:#fff;color:#1a1a2e;display:flex;align-items:center;gap:7px;}
+.btn-google:hover{background:#f0f0f0;transform:translateY(-1px);}
+.btn-vip{background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;font-weight:700;box-shadow:0 4px 15px rgba(240,165,0,0.3);}
+.btn-vip:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(240,165,0,0.4);}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-logout{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
+.btn-logout:hover{background:rgba(255,71,87,0.2);}
+
+/* HERO */
+.hero{position:relative;padding:80px 40px 60px;text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(240,165,0,0.12),transparent),radial-gradient(ellipse 40% 40% at 20% 50%,rgba(79,142,247,0.06),transparent);pointer-events:none;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.2);color:var(--gold);padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-1.5px;}
+.hero h1 span{background:linear-gradient(135deg,var(--gold),#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:520px;margin:0 auto 30px;line-height:1.6;}
+.hero-ctas{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:40px;}
+.btn-hero-primary{padding:14px 32px;font-size:1rem;border-radius:12px;background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 25px rgba(240,165,0,0.35);transition:all 0.2s;}
+.btn-hero-primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(240,165,0,0.45);}
+.btn-hero-secondary{padding:14px 32px;font-size:1rem;border-radius:12px;background:var(--card2);color:var(--text);font-weight:600;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;}
+.btn-hero-secondary:hover{border-color:var(--gold);color:var(--gold);}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stat-item{background:var(--dark);padding:20px;text-align:center;transition:background 0.2s;}
+.stat-item:hover{background:var(--card2);}
+.stat-num{font-size:1.8rem;font-weight:800;line-height:1;margin-bottom:4px;}
+.stat-num.gold{color:var(--gold);}
+.stat-num.green{color:var(--green);}
+.stat-num.blue{color:var(--blue);}
+.stat-num.purple{color:var(--purple);}
+.stat-lab{font-size:0.78rem;color:var(--muted);font-weight:500;}
+
+/* MAIN LAYOUT */
+.main{max-width:1100px;margin:0 auto;padding:40px 20px;display:grid;grid-template-columns:1fr 320px;gap:30px;}
+@media(max-width:800px){.main{grid-template-columns:1fr;}}
+
+/* SECTION TITLE */
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title h3{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sec-badge{padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;}
+.badge-live{background:rgba(255,71,87,0.15);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
+.badge-count{background:var(--card2);color:var(--muted);border:1px solid var(--border);}
+
+/* PRONO CARDS */
+.pronos-list{display:flex;flex-direction:column;gap:12px;}
+.prono-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:all 0.2s;position:relative;overflow:hidden;}
+.prono-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:background 0.2s;}
+.prono-card:hover{border-color:#2a3050;transform:translateX(3px);}
+.prono-card:hover::before{background:var(--gold);}
+.prono-card.vip-card{border-color:rgba(240,165,0,0.25);background:linear-gradient(135deg,#0e1220,#120f05);}
+.prono-card.vip-card::before{background:linear-gradient(180deg,var(--gold),#ff8c00);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.card-league{font-size:0.75rem;color:var(--muted);font-weight:500;}
+.card-tags{display:flex;gap:6px;align-items:center;}
+.tag{padding:2px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;}
+.tag-vip{background:rgba(240,165,0,0.15);color:var(--gold);border:1px solid rgba(240,165,0,0.3);}
+.tag-hot{background:rgba(255,71,87,0.15);color:var(--red);}
+.tag-sure{background:rgba(0,201,122,0.15);color:var(--green);}
+.card-match{font-size:1rem;font-weight:700;margin-bottom:6px;}
+.card-prono{display:inline-flex;align-items:center;gap:6px;background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.15);color:var(--gold);padding:4px 12px;border-radius:8px;font-size:0.85rem;font-weight:600;margin:6px 0;}
+.card-analyse{color:var(--muted);font-size:0.82rem;line-height:1.5;margin-top:8px;}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.card-cote{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--muted);}
+.cote-val{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:2px 10px;border-radius:6px;font-size:0.82rem;font-weight:700;}
+.card-date{font-size:0.75rem;color:var(--muted);}
+.res{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;}
+.res.gagnant{background:rgba(0,201,122,0.12);color:var(--green);border:1px solid rgba(0,201,122,0.2);}
+.res.perdant{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
+.res.pending{background:rgba(90,99,128,0.2);color:var(--muted);border:1px solid var(--border);}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:50px 20px;background:var(--card);border-radius:14px;border:1px dashed var(--border);}
+.empty-state .empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.empty-state p{color:var(--muted);font-size:0.9rem;}
+
+/* LOCK BOX */
+.lock-box{background:var(--card);border:1px solid rgba(240,165,0,0.2);border-radius:16px;padding:40px 30px;text-align:center;position:relative;overflow:hidden;}
+.lock-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(240,165,0,0.05),transparent);pointer-events:none;}
+.lock-icon-box{width:64px;height:64px;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;}
+.lock-box h4{font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.lock-box p{color:var(--muted);font-size:0.88rem;margin-bottom:20px;line-height:1.6;}
+.price-amount{font-size:2.5rem;font-weight:900;color:var(--gold);line-height:1;}
+.price-period{color:var(--muted);font-size:0.9rem;margin-top:2px;margin-bottom:20px;}
+.perks{list-style:none;text-align:left;margin:16px 0 24px;}
+.perks li{padding:7px 0;border-bottom:1px solid var(--border);font-size:0.85rem;color:var(--muted);display:flex;gap:8px;}
+.perks li span{color:var(--green);font-weight:700;}
+.payment-icons{display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.pay-icon{background:var(--card2);border:1px solid var(--border);padding:4px 12px;border-radius:6px;font-size:0.75rem;font-weight:600;color:var(--muted);}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:20px;}
+.sidebar-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.sidebar-title{font-size:0.85rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.perf-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.83rem;}
+.perf-row:last-child{border-bottom:none;}
+.perf-label{color:var(--muted);}
+.perf-val{font-weight:700;}
+.perf-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:8px;}
+.perf-bar{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--green));}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:480px;position:relative;}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:6px;}
+.modal p{color:var(--muted);font-size:0.85rem;margin-bottom:24px;}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.modal-close:hover{color:var(--text);}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--dark);color:var(--text);font-size:0.88rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-full{width:100%;padding:12px;border-radius:10px;font-weight:700;font-size:0.95rem;border:none;cursor:pointer;transition:all 0.2s;}
+.btn-primary-full{background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;}
+.btn-primary-full:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(240,165,0,0.3);}
+.btn-secondary-full{background:var(--card);color:var(--muted);border:1px solid var(--border);}
+.btn-secondary-full:hover{border-color:var(--gold);color:var(--gold);}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:0.8rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:0.85rem;font-weight:600;z-index:999;transform:translateY(100px);opacity:0;transition:all 0.3s;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(0,201,122,0.3);color:var(--green);}
+.toast.error{border-color:rgba(255,71,87,0.3);color:var(--red);}
+.toast.info{border-color:rgba(240,165,0,0.3);color:var(--gold);}
+
+/* ADMIN PANEL */
+.admin-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:0 auto 40px;max-width:1100px;padding:0 20px;}
+.admin-header{background:linear-gradient(135deg,#0e1220,#12151f);border-bottom:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;gap:10px;}
+.admin-header h3{font-size:1rem;font-weight:700;color:var(--gold);}
+.admin-body{padding:24px;}
+.tabs{display:flex;gap:6px;margin-bottom:24px;}
+.tab{padding:8px 20px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--muted);font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.tab.active{background:rgba(240,165,0,0.1);color:var(--gold);border-color:rgba(240,165,0,0.3);}
+.tab:hover{color:var(--text);}
+.admin-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--dark);color:var(--text);font-size:0.88rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
+.admin-form input:focus,.admin-form textarea:focus,.admin-form select:focus{border-color:var(--gold);}
+.admin-form textarea{resize:vertical;height:80px;}
+.admin-form .full{grid-column:span 2;}
+.btn-publish{background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:0.95rem;transition:all 0.2s;}
+.btn-publish:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(240,165,0,0.3);}
+.admin-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.admin-table th{background:var(--dark);padding:10px 14px;text-align:left;color:var(--muted);font-weight:600;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+.admin-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.admin-table tr:hover td{background:rgba(255,255,255,0.02);}
+.a-btn{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:0.75rem;font-weight:700;margin-right:4px;transition:all 0.15s;}
+.a-win{background:rgba(0,201,122,0.1);color:var(--green);border:1px solid rgba(0,201,122,0.2);}
+.a-lose{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
+.a-del{background:rgba(255,71,87,0.05);color:var(--red);}
+.a-btn:hover{transform:scale(1.05);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:0.8rem;}
+.footer-logo{color:var(--gold);font-weight:800;font-size:1rem;}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 16px;height:56px;}
+  .nav-center{display:none;}
+  .logo{font-size:1.05rem;}
+  .logo-icon{width:30px;height:30px;font-size:0.9rem;}
+  .btn{padding:7px 12px;font-size:0.8rem;}
+  .hero{padding:40px 16px 30px;}
+  .hero h1{font-size:1.8rem;letter-spacing:-0.8px;}
+  .hero p{font-size:0.9rem;}
+  .hero-ctas{flex-direction:column;align-items:center;}
+  .btn-hero-primary,.btn-hero-secondary{width:100%;max-width:340px;padding:14px;font-size:0.95rem;}
+  .stats-bar{grid-template-columns:1fr 1fr;}
+  .stat-num{font-size:1.4rem;}
+  .main{padding:20px 12px;gap:20px;}
+  .prono-card{padding:14px;}
+  .card-match{font-size:0.92rem;}
+  .card-footer{flex-direction:column;align-items:flex-start;gap:8px;}
+  .lock-box{padding:28px 16px;}
+  .price-amount{font-size:2rem;}
+  .modal{padding:24px 16px;max-width:100%;border-radius:20px 20px 0 0;position:fixed;bottom:0;left:0;right:0;}
+  .modal-bg{align-items:flex-end;padding:0;}
+  .admin-form{grid-template-columns:1fr;}
+  .admin-form .full{grid-column:span 1;}
+  .admin-section{margin:0 12px 30px;}
+  .admin-table{font-size:0.75rem;}
+  .admin-table th,.admin-table td{padding:8px;}
+  .tabs{flex-wrap:wrap;}
+  footer{flex-direction:column;text-align:center;padding:20px 16px;font-size:0.75rem;}
+}
+@media(max-width:390px){
+  .hero h1{font-size:1.5rem;}
+  .nav-right{gap:6px;}
+  .stat-num{font-size:1.2rem;}
+}
+@media(hover:none){
+  .prono-card:hover{transform:none;}
+  .btn:hover{transform:none;opacity:1;}
+  .btn:active{opacity:0.8;transform:scale(0.97);}
+  .btn-hero-primary:active{transform:scale(0.97);}
+}
+body{padding-bottom:env(safe-area-inset-bottom);}
+nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));}
+.toast{bottom:max(24px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right));}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL CONNEXION -->
+<div class="modal-bg" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-login')">✕</button>
+    <h3>👋 Connexion</h3>
+    <p>Accède à ton espace membre et à tes pronos VIP.</p>
+    <a href="/auth/google" style="text-decoration:none">
+      <button class="btn-full" style="background:#fff;color:#333;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:0.95rem;width:100%">
+        <img src="https://img.icons8.com/color/20/google-logo.png"/> Continuer avec Google
+      </button>
+    </a>
+    <div class="divider">ou</div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="ton@email.com" id="login-email"/>
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" placeholder="••••••••" id="login-pwd"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-full btn-primary-full" onclick="doLogin()">Se connecter</button>
+    </div>
+    <p style="text-align:center;margin-top:14px;font-size:0.82rem;color:var(--muted)">
+      Pas de compte ? <a href="#" style="color:var(--gold);text-decoration:none" onclick="switchModal('modal-login','modal-register')">S'inscrire gratuitement</a>
+    </p>
+  </div>
+</div>
+
+<!-- MODAL INSCRIPTION -->
+<div class="modal-bg" id="modal-register">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-register')">✕</button>
+    <h3>🚀 Créer un compte</h3>
+    <p>Inscris-toi et accède à tous les pronos VIP.</p>
+    <a href="/auth/google" style="text-decoration:none">
+      <button class="btn-full" style="background:#fff;color:#333;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:0.95rem;width:100%">
+        <img src="https://img.icons8.com/color/20/google-logo.png"/> S'inscrire avec Google
+      </button>
+    </a>
+    <div class="divider">ou</div>
+    <div class="form-group">
+      <label>Pseudo</label>
+      <input type="text" placeholder="TonPseudo" id="reg-username"/>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="ton@email.com" id="reg-email"/>
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" placeholder="••••••••" id="reg-pwd"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-full btn-primary-full" onclick="doRegister()">Créer mon compte</button>
+    </div>
+    <p style="text-align:center;margin-top:14px;font-size:0.82rem;color:var(--muted)">
+      Déjà membre ? <a href="#" style="color:var(--gold);text-decoration:none" onclick="switchModal('modal-register','modal-login')">Se connecter</a>
+    </p>
+  </div>
+</div>
+
+<!-- MODAL PAIEMENT VIP -->
+<div class="modal-bg" id="modal-payment">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-payment')">✕</button>
+    <h3>⭐ Devenir membre VIP</h3>
+    <p>Accède aux pronos exclusifs et analyses complètes.</p>
+    <div style="background:var(--dark);border-radius:12px;padding:20px;margin-bottom:20px;">
+      <div style="font-size:2rem;font-weight:900;color:var(--gold)">5,99€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
+      <div style="color:var(--muted);font-size:0.82rem;margin-top:4px;">Annulation à tout moment · Sans engagement</div>
+      <ul class="perks" style="margin-top:14px;">
+        <li><span>✓</span> Pronos VIP quotidiens avec analyses</li>
+        <li><span>✓</span> Taux de réussite moyen 74%</li>
+        <li><span>✓</span> Alertes en temps réel</li>
+        <li><span>✓</span> Historique complet 12 mois</li>
+      </ul>
+    </div>
+    <button class="btn-full btn-primary-full" onclick="goToStripe()">💳 Payer avec Stripe</button>
+    <div class="payment-icons" style="margin-top:14px;">
+      <span class="pay-icon">💳 Carte</span>
+      <span class="pay-icon">🅿️ PayPal</span>
+      <span class="pay-icon">🍎 Apple Pay</span>
+      <span class="pay-icon">🤖 Google Pay</span>
+    </div>
+    <p style="text-align:center;margin-top:12px;font-size:0.75rem;color:var(--muted)">🔒 Paiement sécurisé par Stripe</p>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">
+      <img src="/logo.png" alt="PronoElite" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+    </div>
+    E&V<span>Prono</span>
+  </div>
+
+  <div class="nav-center">
+    <button class="nav-link active">Accueil</button>
+    <button class="nav-link" onclick="scrollToStats()">Stats</button>
+    <button class="nav-link" onclick="showToast('Historique bientôt disponible 📊','info')">Historique</button>
+  </div>
+
+  <div class="nav-right">
+    <span class="nav-username" id="nav-username" style="display:none"></span>
+    <div id="nav-guest" style="display:flex;gap:8px;">
+      <button class="btn btn-outline" onclick="openModal('modal-login')">Connexion</button>
+      <button class="btn btn-vip" onclick="openModal('modal-register')">S'inscrire</button>
+    </div>
+    <div id="nav-user" style="display:none;gap:8px;align-items:center;">
+      <button class="btn btn-outline" id="btn-portal" style="display:none" onclick="showToast('Redirection vers Stripe...','info')">⚙️ Mon abonnement</button>
+      <button class="btn btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+</nav>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">🔥 Saison 2025/2026 en cours</div>
+  <h1>Pronostics Football<br/><span>Analyse & Expertise</span></h1>
+  <p>Des pronos détaillés chaque jour, avec un taux de réussite de 74%. Accède aux analyses VIP et maximise tes gains.</p>
+  <div id="hero-ctas-guest" class="hero-ctas">
+    <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Rejoindre VIP — 5,99€/mois</button>
+    <button class="btn-hero-secondary" onclick="openModal('modal-login')">📊 Déjà membre ? Connexion</button>
+  </div>
+  <div id="hero-ctas-vip" style="display:none">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,201,122,0.1);border:1px solid rgba(0,201,122,0.2);color:var(--green);padding:10px 20px;border-radius:12px;font-weight:600;">
+      ✅ Tu es membre VIP — Accès complet débloqué
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="stats-anchor">
+  <div class="stat-item"><div class="stat-num gold">74%</div><div class="stat-lab">Taux de réussite</div></div>
+  <div class="stat-item"><div class="stat-num green" id="stat-members">158</div><div class="stat-lab">Membres VIP</div></div>
+  <div class="stat-item"><div class="stat-num blue" id="stat-pronos">0</div><div class="stat-lab">Pronos publiés</div></div>
+  <div class="stat-item"><div class="stat-num purple">+38%</div><div class="stat-lab">ROI moyen</div></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div>
+    <div class="sec-title">
+      <h3>📅 Pronos du jour <span class="sec-badge badge-live">● LIVE</span></h3>
+    </div>
+    <div class="pronos-list" id="pronos-publics">
+      <div class="empty-state"><div class="empty-icon">📭</div><p>Aucun prono public pour le moment.<br/>Reviens bientôt !</p></div>
+    </div>
+
+    <div id="section-vip" style="display:none;margin-top:32px;">
+      <div class="sec-title">
+        <h3>⭐ Pronos VIP Exclusifs <span class="sec-badge badge-count" id="vip-count">0 aujourd'hui</span></h3>
+      </div>
+      <div class="pronos-list" id="pronos-vip">
+        <div class="empty-state"><div class="empty-icon">⭐</div><p>Aucun prono VIP pour le moment.</p></div>
+      </div>
+    </div>
+
+    <div id="section-lock" style="margin-top:32px;">
+      <div class="lock-box">
+        <div class="lock-icon-box">🔒</div>
+        <h4>Accès réservé aux membres VIP</h4>
+        <p>Rejoins nos membres et accède aux pronos exclusifs avec analyses détaillées et statistiques avancées.</p>
+        <div class="price-amount">5,99€</div>
+        <div class="price-period">par mois · Annulation à tout moment</div>
+        <ul class="perks">
+          <li><span>✓</span> Pronos VIP quotidiens avec analyses détaillées</li>
+          <li><span>✓</span> Taux de réussite moyen 74% sur les pronos VIP</li>
+          <li><span>✓</span> Alertes match en temps réel</li>
+          <li><span>✓</span> Accès à l'historique complet (12 mois)</li>
+          <li><span>✓</span> Support prioritaire</li>
+        </ul>
+        <button class="btn-hero-primary" style="width:100%" onclick="openModal('modal-payment')">⭐ Devenir membre VIP maintenant</button>
+        <div class="payment-icons">
+          <span class="pay-icon">💳 Carte</span>
+          <span class="pay-icon">🅿️ PayPal</span>
+          <span class="pay-icon">🍎 Apple Pay</span>
+          <span class="pay-icon">🤖 Google Pay</span>
+        </div>
+        <p style="margin-top:10px;font-size:0.75rem;color:var(--muted)">🔒 Paiement 100% sécurisé par Stripe</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">📊 Performances ce mois</div>
+      <div class="perf-row"><span class="perf-label">Taux de réussite</span><span class="perf-val" style="color:var(--green)">74%</span></div>
+      <div class="perf-bar-wrap"><div class="perf-bar" style="width:74%"></div></div>
+      <div class="perf-row" style="margin-top:10px;"><span class="perf-label">Pronos gagnants</span><span class="perf-val" style="color:var(--green)" id="s-win">0</span></div>
+      <div class="perf-row"><span class="perf-label">Pronos perdants</span><span class="perf-val" style="color:var(--red)" id="s-lose">0</span></div>
+      <div class="perf-row"><span class="perf-label">En attente</span><span class="perf-val" style="color:var(--muted)" id="s-pending">0</span></div>
+      <div class="perf-row"><span class="perf-label">ROI moyen</span><span class="perf-val" style="color:var(--gold)">+38%</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">⏰ Prochains matchs</div>
+      <div id="upcoming-empty" style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Aucun match programmé</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-section" id="admin-panel" style="display:none">
+  <div class="admin-header">
+    <span style="font-size:1.2rem">🛠️</span>
+    <h3>Panel Administrateur</h3>
+    <span style="margin-left:auto;font-size:0.75rem;color:var(--muted)">Accès restreint</span>
+  </div>
+  <div class="admin-body">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('tab-add',this)">➕ Nouveau prono</button>
+      <button class="tab" onclick="showTab('tab-manage',this)">📋 Gérer les pronos</button>
+    </div>
+    <div id="tab-add">
+      <div class="admin-form">
+        <input type="text"   id="a-league"  placeholder="Ligue (ex : 🇫🇷 Ligue 1)"/>
+        <input type="text"   id="a-match"   placeholder="Match (ex : PSG vs OM)"/>
+        <input type="text"   id="a-prono"   placeholder="Pronostic (ex : Victoire PSG)"/>
+        <input type="number" id="a-cote"    placeholder="Cote (ex : 1.85)" step="0.01"/>
+        <input type="datetime-local" id="a-date" class="full"/>
+        <select id="a-type">
+          <option value="public">🌍 Public</option>
+          <option value="vip">⭐ VIP</option>
+        </select>
+        <select id="a-tag">
+          <option value="">Aucun tag</option>
+          <option value="hot">🔥 Hot</option>
+          <option value="sure">✓ Sûr</option>
+        </select>
+        <textarea id="a-analyse" class="full" placeholder="Analyse complète du match..."></textarea>
+        <button class="btn-publish full" onclick="addProno()">🚀 Publier le prono</button>
+      </div>
+    </div>
+    <div id="tab-manage" style="display:none">
+      <div id="admin-table-wrap">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>Aucun prono publié pour le moment.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">⚽ PronoElite</div>
+  <div>Pronostics à titre informatif · Jeu responsable · 18+</div>
+  <div>© 2026 PronoElite · <a href="#" style="color:var(--muted);text-decoration:none">CGU</a> · <a href="#" style="color:var(--muted);text-decoration:none">Mentions légales</a></div>
+</footer>
+
+<script>
+const API = '';
+let TOKEN = localStorage.getItem('token');
+
+const params = new URLSearchParams(window.location.search);
+if (params.get('token')) {
+  TOKEN = params.get('token');
+  localStorage.setItem('token', TOKEN);
+  window.history.replaceState({}, '', '/');
+}
+
+function parseJWT(token) {
+  try { return JSON.parse(atob(token.split('.')[1])); }
+  catch { return null; }
+}
+
+async function init() {
+  const user = TOKEN ? parseJWT(TOKEN) : null;
+
+  if (user) {
+    document.getElementById('nav-guest').style.display    = 'none';
+    document.getElementById('nav-user').style.display     = 'flex';
+    document.getElementById('nav-username').style.display = 'inline-block';
+    document.getElementById('nav-username').textContent   = '👤 ' + user.username;
+    document.getElementById('hero-ctas-guest').style.display = 'none';
+    document.getElementById('hero-ctas-vip').style.display   = 'block';
+
+    if (user.isVIP || user.isAdmin) {
+      document.getElementById('section-vip').style.display  = 'block';
+      document.getElementById('section-lock').style.display = 'none';
+      document.getElementById('btn-portal').style.display   = 'inline-block';
+      loadVIPPronos();
+    }
+
+    if (user.isAdmin) {
+      document.getElementById('admin-panel').style.display = 'block';
+      loadAdminTable();
+    }
+  }
+
+  loadPublicPronos();
+  updateStats();
+}
+
+async function loadPublicPronos() {
+  try {
+    const res    = await fetch(`${API}/api/pronos/public`);
+    const pronos = await res.json();
+    const el     = document.getElementById('pronos-publics');
+    el.innerHTML = pronos.length
+      ? pronos.map(renderCard).join('')
+      : `<div class="empty-state"><div class="empty-icon">📭</div><p>Aucun prono public pour le moment.</p></div>`;
+  } catch(e) { console.error(e); }
+}
+
+async function loadVIPPronos() {
+  try {
+    const res    = await fetch(`${API}/api/pronos/vip`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const pronos = await res.json();
+    const el     = document.getElementById('pronos-vip');
+    el.innerHTML = pronos.length
+      ? pronos.map(renderCard).join('')
+      : `<div class="empty-state"><div class="empty-icon">⭐</div><p>Aucun prono VIP pour le moment.</p></div>`;
+    document.getElementById('vip-count').textContent = `${pronos.length} aujourd'hui`;
+  } catch(e) { console.error(e); }
+}
+
+async function loadAdminTable() {
+  try {
+    const res    = await fetch(`${API}/api/pronos/all`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const pronos = await res.json();
+    const wrap   = document.getElementById('admin-table-wrap');
+    if (!pronos.length) {
+      wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>Aucun prono publié.</p></div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <table class="admin-table">
+        <thead><tr>
+          <th>Match</th><th>Pronostic</th><th>Cote</th><th>Type</th><th>Résultat</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${pronos.map(p => `
+            <tr>
+              <td>${p.match}</td>
+              <td>${p.prono}</td>
+              <td>${p.cote}</td>
+              <td>${p.type === 'vip'
+                ? '<span class="tag tag-vip">⭐ VIP</span>'
+                : '<span class="tag" style="background:rgba(79,142,247,0.1);color:var(--blue)">🌍 Public</span>'
+              }</td>
+              <td>${
+                p.resultat === 'gagnant' ? '<span class="res gagnant">✅ Gagnant</span>' :
+                p.resultat === 'perdant' ? '<span class="res perdant">❌ Perdant</span>' :
+                '<span class="res pending">⏳ En attente</span>'
+              }</td>
+              <td>
+                <button class="a-btn a-win"  onclick="setResultat('${p._id}','gagnant')">✅</button>
+                <button class="a-btn a-lose" onclick="setResultat('${p._id}','perdant')">❌</button>
+                <button class="a-btn a-del"  onclick="deleteProno('${p._id}')">🗑️</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  } catch(e) { console.error(e); }
+}
+
+async function addProno() {
+  const body = {
+    league:  document.getElementById('a-league').value.trim(),
+    match:   document.getElementById('a-match').value.trim(),
+    prono:   document.getElementById('a-prono').value.trim(),
+    cote:    parseFloat(document.getElementById('a-cote').value),
+    date:    document.getElementById('a-date').value,
+    type:    document.getElementById('a-type').value,
+    tag:     document.getElementById('a-tag').value,
+    analyse: document.getElementById('a-analyse').value.trim()
+  };
+  if (!body.match || !body.prono || !body.cote) {
+    showToast('❌ Match, pronostic et cote sont requis', 'error');
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/api/pronos/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      ['a-league','a-match','a-prono','a-cote','a-date','a-analyse'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('a-type').value = 'public';
+      document.getElementById('a-tag').value  = '';
+      showToast('✅ Prono publié !', 'success');
+      loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats();
+    }
+  } catch(e) { showToast('❌ Erreur serveur', 'error'); }
+}
+
+async function setResultat(id, resultat) {
+  await fetch(`${API}/api/pronos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
+    body: JSON.stringify({ resultat })
+  });
+  showToast(resultat === 'gagnant' ? '✅ Marqué gagnant !' : '❌ Marqué perdant !',
+    resultat === 'gagnant' ? 'success' : 'error');
+  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats();
+}
+
+async function deleteProno(id) {
+  await fetch(`${API}/api/pronos/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${TOKEN}` }
+  });
+  showToast('🗑️ Prono supprimé', 'info');
+  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats();
+}
+
+async function updateStats() {
+  try {
+    const res    = await fetch(`${API}/api/pronos/public`);
+    const pronos = await res.json();
+    document.getElementById('stat-pronos').textContent = pronos.length;
+    document.getElementById('s-win').textContent       = pronos.filter(p => p.resultat === 'gagnant').length;
+    document.getElementById('s-lose').textContent      = pronos.filter(p => p.resultat === 'perdant').length;
+    document.getElementById('s-pending').textContent   = pronos.filter(p => p.resultat === 'pending').length;
+  } catch(e) { console.error(e); }
+}
+
+function renderCard(p) {
+  const tagHtml = p.tag === 'hot'
+    ? '<span class="tag tag-hot">🔥 Hot</span>'
+    : p.tag === 'sure'
+    ? '<span class="tag tag-sure">✓ Sûr</span>' : '';
+  const vipTag = p.type === 'vip' ? '<span class="tag tag-vip">⭐ VIP</span>' : '';
+  const dateStr = p.date
+    ? new Date(p.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
+    : '';
+  return `
+    <div class="prono-card ${p.type === 'vip' ? 'vip-card' : ''}">
+      <div class="card-top">
+        <div class="card-league">${p.league || ''}</div>
+        <div class="card-tags">${vipTag}${tagHtml}</div>
+      </div>
+      <div class="card-match">${p.match}</div>
+      <div class="card-prono">→ ${p.prono}</div>
+      ${p.analyse ? `<div class="card-analyse">${p.analyse}</div>` : ''}
+      <div class="card-footer">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="card-cote">Cote <span class="cote-val">${p.cote}</span></div>
+          ${dateStr ? `<div class="card-date">📅 ${dateStr}</div>` : ''}
+        </div>
+        ${p.resultat === 'gagnant'
+          ? '<span class="res gagnant">✅ Gagnant</span>'
+          : p.resultat === 'perdant'
+          ? '<span class="res perdant">❌ Perdant</span>'
+          : '<span class="res pending">⏳ En attente</span>'}
+      </div>
+    </div>`;
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  window.location.href = '/auth/logout';
+}
+
+function goToStripe() {
+  closeModal('modal-payment');
+  showToast('🔄 Redirection vers Stripe...', 'info');
+  setTimeout(() => { window.location.href = '/api/payment/create-checkout'; }, 1000);
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function switchModal(from, to) { closeModal(from); openModal(to); }
+
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+function scrollToStats() {
+  document.getElementById('stats-anchor').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showTab(id, btn) {
+  ['tab-add','tab-manage'].forEach(t => document.getElementById(t).style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd   = document.getElementById('login-pwd').value.trim();
+  if (!email || !pwd) { showToast('❌ Remplis tous les champs', 'error'); return; }
+  try {
+    const res  = await fetch('/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password: pwd })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      TOKEN = data.token;
+      localStorage.setItem('token', TOKEN);
+      showToast('✅ Connecté !', 'success');
+      closeModal('modal-login');
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast('❌ ' + (data.error || 'Identifiants incorrects'), 'error');
+    }
+  } catch(e) { showToast('❌ Erreur serveur', 'error'); }
+}
+
+async function doRegister() {
+  const username = document.getElementById('reg-username').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const pwd      = document.getElementById('reg-pwd').value.trim();
+  if (!username || !email || !pwd) { showToast('❌ Remplis tous les champs', 'error'); return; }
+  try {
+    const res  = await fetch('/auth/register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username, email, password: pwd })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      TOKEN = data.token;
+      localStorage.setItem('token', TOKEN);
+      showToast('✅ Compte créé !', 'success');
+      closeModal('modal-register');
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast('❌ ' + (data.error || 'Erreur inscription'), 'error');
+    }
+  } catch(e) { showToast('❌ Erreur serveur', 'error'); }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  window.location.href = '/auth/logout';
+}
+
+init();
+</script>
+</body>
+</html>
