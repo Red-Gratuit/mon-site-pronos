@@ -1,9 +1,10 @@
 require('dotenv').config();
-const express  = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
-const session  = require('express-session');
 const passport = require('passport');
-const cors     = require('cors');
+const session = require('express-session');
+const cors = require('cors');
+const path = require('path');
 
 require('./config/passport');
 
@@ -37,6 +38,11 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
   });
+});
+
+// Servir la page d'historique
+app.get('/history', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'history.html'));
 });
 
 app.get('/api/me', (req, res) => {

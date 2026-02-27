@@ -466,109 +466,48 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
   <div class="stat-item"><div class="stat-num purple" id="stat-members">158</div><div class="stat-lab">Membres VIP</div></div>
 </div>
 
-<!-- HISTORIQUE SECTION -->
-<div class="container" id="history-section">
+<!-- SECTION RÉSULTATS RAPIDES -->
+<div class="container">
   <div class="section-header">
-    <h2>📊 Historique des Pronostics</h2>
-    <p>Retrouvez tous nos pronostics et leurs résultats</p>
+    <h2>📊 Derniers Résultats</h2>
+    <p>Nos performances récentes</p>
   </div>
-
-  <!-- STATISTIQUES DÉTAILLÉES -->
-  <div class="stats-grid" id="detailed-stats">
+  
+  <div class="stats-grid" id="quick-stats">
     <div class="stat-card">
       <div class="stat-icon">📈</div>
       <div class="stat-info">
-        <div class="stat-value" id="success-rate">-</div>
+        <div class="stat-value" id="quick-success-rate">-</div>
         <div class="stat-label">Taux de réussite</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon">🎯</div>
       <div class="stat-info">
-        <div class="stat-value" id="total-pronos">-</div>
+        <div class="stat-value" id="quick-total">-</div>
         <div class="stat-label">Total pronostics</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon">✅</div>
       <div class="stat-info">
-        <div class="stat-value" id="wins">-</div>
+        <div class="stat-value" id="quick-wins">-</div>
         <div class="stat-label">Pronostics gagnés</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">❌</div>
-      <div class="stat-info">
-        <div class="stat-value" id="losses">-</div>
-        <div class="stat-label">Pronostics perdus</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">⏳</div>
-      <div class="stat-info">
-        <div class="stat-value" id="pending">-</div>
-        <div class="stat-label">En attente</div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon">💰</div>
       <div class="stat-info">
-        <div class="stat-value" id="avg-odds">-</div>
+        <div class="stat-value" id="quick-odds">-</div>
         <div class="stat-label">Cote moyenne</div>
       </div>
     </div>
   </div>
-
-  <!-- FILTRES -->
-  <div class="filters-section">
-    <div class="filter-group">
-      <label>Ligue:</label>
-      <select id="filter-league">
-        <option value="">Toutes les ligues</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>Type:</label>
-      <select id="filter-type">
-        <option value="">Tous</option>
-        <option value="public">Public</option>
-        <option value="vip">VIP</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>Résultat:</label>
-      <select id="filter-result">
-        <option value="">Tous</option>
-        <option value="gagnant">Gagné</option>
-        <option value="perdant">Perdu</option>
-        <option value="pending">En attente</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>Date début:</label>
-      <input type="date" id="filter-start">
-    </div>
-    <div class="filter-group">
-      <label>Date fin:</label>
-      <input type="date" id="filter-end">
-    </div>
-    <button class="btn btn-primary-full" onclick="applyFilters()">Appliquer les filtres</button>
-    <button class="btn btn-outline-full" onclick="resetFilters()">Réinitialiser</button>
-  </div>
-
-  <!-- LISTE DES PRONOSTICS -->
-  <div class="pronos-history" id="pronos-history">
-    <div class="empty-state">
-      <div class="empty-icon">📋</div>
-      <p>Chargement de l'historique...</p>
-    </div>
-  </div>
-
-  <!-- PAGINATION -->
-  <div class="pagination" id="pagination">
-    <button class="btn btn-outline" onclick="changePage('prev')" id="prev-btn">← Précédent</button>
-    <span id="page-info">Page 1 sur 1</span>
-    <button class="btn btn-outline" onclick="changePage('next')" id="next-btn">Suivant →</button>
+  
+  <div style="text-align:center;margin-top:30px;">
+    <a href="/history" style="display:inline-block;">
+      <button class="btn-hero-primary">📊 Voir l'historique complet</button>
+    </a>
   </div>
 </div>
 
@@ -739,8 +678,7 @@ async function init() {
 
   loadPublicPronos();
   updateStats();
-  loadHistory();
-  loadDetailedStats();
+  loadQuickStats();
 }
 
 async function loadPublicPronos() {
@@ -837,7 +775,7 @@ async function addProno() {
       document.getElementById('a-type').value = 'public';
       showToast('✅ Prono publié !', 'success');
       loadAdminTable();
-      loadHistory(); // Recharger l'historique
+      loadQuickStats();
     } else {
       const err = await res.json();
       showToast('❌ ' + (err.error || 'Erreur'), 'error');
@@ -853,7 +791,7 @@ async function setResultat(id, resultat) {
   });
   showToast(resultat === 'gagnant' ? '✅ Marqué gagnant !' : '❌ Marqué perdant !',
     resultat === 'gagnant' ? 'success' : 'error');
-  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats(); loadHistory(); loadDetailedStats();
+  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats(); loadQuickStats();
 }
 
 async function deleteProno(id) {
@@ -1068,7 +1006,22 @@ function scrollToStats() {
 }
 
 function scrollToHistory() {
-  document.getElementById('history-section').scrollIntoView({ behavior: 'smooth' });
+  window.location.href = '/history';
+}
+
+// Charger les statistiques rapides pour l'accueil
+async function loadQuickStats() {
+  try {
+    const res = await fetch(`${API}/api/history/stats`);
+    const stats = await res.json();
+    
+    document.getElementById('quick-success-rate').textContent = stats.tauxReussite + '%';
+    document.getElementById('quick-total').textContent = stats.total;
+    document.getElementById('quick-wins').textContent = stats.gagnants;
+    document.getElementById('quick-odds').textContent = stats.coteMoyenne;
+  } catch (error) {
+    console.error('Erreur stats rapides:', error);
+  }
 }
 
 // Variables globales pour l'historique
