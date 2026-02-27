@@ -823,14 +823,38 @@ if (params.get('token')) {
 }
 
 function parseJWT(token) {
-  try { return JSON.parse(atob(token.split('.')[1])); }
-  catch { return null; }
+  try { 
+    console.log('🔍 PARSEJWT - Token reçu:', token);
+    const parts = token.split('.');
+    console.log('🔍 PARSEJWT - Parts token:', parts);
+    
+    if (parts.length !== 3) {
+      console.log('❌ PARSEJWT - Token invalide: pas 3 parties');
+      return null;
+    }
+    
+    const payload = atob(parts[1]);
+    console.log('🔍 PARSEJWT - Payload décodé:', payload);
+    
+    const parsed = JSON.parse(payload);
+    console.log('🔍 PARSEJWT - User parsé:', parsed);
+    
+    return parsed;
+  } catch (error) {
+    console.log('❌ PARSEJWT - Erreur parsing token:', error);
+    return null;
+  }
 }
 
 async function init() {
+  console.log('🔍 INIT - Token brut:', TOKEN);
+  
   const user = TOKEN ? parseJWT(TOKEN) : null;
+  console.log('🔍 INIT - User parsé:', user);
 
   if (user) {
+    console.log('🔍 INIT - Utilisateur détecté, mise à jour de l\'UI');
+    
     // Masquer les éléments pour invités
     document.getElementById('nav-guest').style.display    = 'none';
     document.getElementById('mobile-nav-guest').style.display = 'none';
@@ -848,6 +872,7 @@ async function init() {
     
     // Gérer l'affichage selon le statut VIP
     if (user.isVIP || user.isAdmin) {
+      console.log('🔍 INIT - Utilisateur VIP/Admin détecté');
       // Utilisateur VIP ou Admin
       document.getElementById('hero-ctas-vip').style.display = 'block';
       document.getElementById('section-vip').style.display  = 'block';
@@ -861,6 +886,7 @@ async function init() {
         loadAdminTable();
       }
     } else {
+      console.log('🔍 INIT - Utilisateur standard détecté');
       // Utilisateur standard (non-VIP)
       document.getElementById('hero-ctas-vip').style.display = 'none';
       document.getElementById('section-vip').style.display  = 'none';
@@ -876,6 +902,7 @@ async function init() {
     // Charger le profil utilisateur
     loadUserProfile();
   } else {
+    console.log('🔍 INIT - Aucun utilisateur détecté, affichage invité');
     // Utilisateur non connecté - afficher les éléments invités
     document.getElementById('nav-guest').style.display    = 'flex';
     document.getElementById('mobile-nav-guest').style.display = 'flex';
