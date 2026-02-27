@@ -9,14 +9,20 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+  console.log('🔍 Auth - Token reçu:', token ? 'YES' : 'NO');
+  console.log('🔍 Auth - Header:', authHeader);
+
   if (!token) {
+    console.log('❌ Auth - Token requis');
     return res.status(401).json({ error: 'Token requis' });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
+      console.log('❌ Auth - Token invalide:', err.message);
       return res.status(403).json({ error: 'Token invalide' });
     }
+    console.log('✅ Auth - User validé:', user.email);
     req.user = user;
     next();
   });
