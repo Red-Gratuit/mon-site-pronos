@@ -635,44 +635,6 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
   </div>
 </div>
 
-<!-- LIVE MATCHES TRACKER -->
-<div class="container">
-  <div class="section-header">
-    <h2>⚡ Matchs en Direct</h2>
-    <p>Suivez les résultats de vos pronostics en temps réel</p>
-  </div>
-  
-  <div class="live-matches-grid" id="live-matches">
-    <div class="live-match-card">
-      <div class="live-header">
-        <div class="live-teams">
-          <span class="team-name">PSG</span>
-          <span class="vs">VS</span>
-          <span class="team-name">OM</span>
-        </div>
-        <div class="live-score">
-          <span class="score-home">2</span>
-          <span class="score-separator">-</span>
-          <span class="score-away">1</span>
-        </div>
-      </div>
-      <div class="live-status">
-        <span class="live-indicator">● LIVE</span>
-        <span class="live-time">75'</span>
-      </div>
-      <div class="live-prono">
-        <span class="prono-label">Votre prono:</span>
-        <span class="prono-value">Victoire PSG</span>
-        <span class="prono-status status-winning">✅ GAGNANT</span>
-      </div>
-    </div>
-  </div>
-  
-  <div style="text-align:center;margin-top:20px;">
-    <button class="btn btn-outline" onclick="refreshLiveMatches()">🔄 Actualiser</button>
-  </div>
-</div>
-
 <!-- STATS BAR -->
 <div class="stats-bar" id="stats-anchor">
   <div class="stat-item"><div class="stat-num gold" id="stat-success-rate">74%</div><div class="stat-lab">Taux de réussite</div></div>
@@ -848,7 +810,6 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
     <div class="tabs">
       <button class="tab active" onclick="showTab('tab-add',this)">➕ Nouveau prono</button>
       <button class="tab" onclick="showTab('tab-manage',this)">📋 Gérer les pronos</button>
-      <button class="tab" onclick="showTab('tab-live',this)">⚡ Matchs live</button>
     </div>
     <div id="tab-add">
       <div class="admin-form">
@@ -878,37 +839,6 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
     <div id="tab-manage" style="display:none">
       <div id="admin-table-wrap">
         <div class="empty-state"><div class="empty-icon">📋</div><p>Aucun prono publié pour le moment.</p></div>
-      </div>
-    </div>
-    <div id="tab-live" style="display:none">
-      <div style="margin-bottom:20px;">
-        <h4 style="margin-bottom:15px;">➕ Ajouter un match live</h4>
-        <div class="admin-form">
-          <input type="text" id="live-home" placeholder="Équipe domicile (ex : PSG)"/>
-          <input type="text" id="live-away" placeholder="Équipe extérieur (ex : OM)"/>
-          <input type="number" id="live-score-home" placeholder="Score domicile" min="0"/>
-          <input type="number" id="live-score-away" placeholder="Score extérieur" min="0"/>
-          <input type="number" id="live-minute" placeholder="Minute (ex : 75)" min="0" max="120"/>
-          <select id="live-status">
-            <option value="LIVE">🔴 LIVE</option>
-            <option value="HT">⏸️ MI-TEMPS</option>
-            <option value="FT">🏁 TERMINÉ</option>
-            <option value="POSTPONED">⏸️ REPORTÉ</option>
-          </select>
-          <input type="text" id="live-league" placeholder="Compétition (ex : Ligue 1)"/>
-          <button class="btn-publish full" onclick="addLiveMatch()">⚡ Ajouter le match</button>
-        </div>
-      </div>
-      
-      <div style="margin-bottom:20px;">
-        <h4 style="margin-bottom:15px;">📋 Matchs en cours</h4>
-        <div id="live-matches-admin">
-          <div class="empty-state"><div class="empty-icon">⚡</div><p>Aucun match live pour le moment.</p></div>
-        </div>
-      </div>
-      
-      <div style="text-align:center;">
-        <button class="btn-outline" onclick="clearAllLiveMatches()">🗑️ Vider tous les matchs</button>
       </div>
     </div>
   </div>
@@ -1054,7 +984,6 @@ async function init() {
 
   loadPublicPronos();
   updateStats();
-  loadLiveMatches();
 }
 
 async function loadPublicPronos() {
@@ -2016,15 +1945,13 @@ function updateStatsBar(stats) {
 }
 
 function showTab(id, btn) {
-  ['tab-add','tab-manage','tab-live'].forEach(t => document.getElementById(t).style.display = 'none');
+  ['tab-add','tab-manage'].forEach(t => document.getElementById(t).style.display = 'none');
   document.getElementById(id).style.display = 'block';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   
   // Charger les données spécifiques au tab
-  if (id === 'tab-live') {
-    loadLiveMatchesAdmin();
-  } else if (id === 'tab-manage') {
+  if (id === 'tab-manage') {
     loadAdminTable();
   }
 }
