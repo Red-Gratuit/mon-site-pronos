@@ -29,6 +29,7 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/auth',       require('./routes/auth'));
 app.use('/api/pronos', require('./routes/pronos'));
 app.use('/api/payment', require('./routes/payment'));
+app.use('/api/user',    require('./routes/user'));
 
 app.get('/logout', (req, res) => {
   req.logout(() => {

@@ -2,6 +2,25 @@ const express = require('express');
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+// Middleware pour vérifier le token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Token requis' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Token invalide' });
+    }
+    req.user = user;
+    next();
+  });
+};
 
 // Route pour créer une session de paiement Stripe
 router.post('/create-checkout', async (req, res) => {
@@ -28,6 +47,29 @@ router.post('/create-checkout', async (req, res) => {
 // Endpoint de test pour webhook
 router.get('/webhook/test', (req, res) => {
   res.json({ message: 'Webhook endpoint is working!' });
+});
+
+// Route pour accéder au portail client Stripe
+router.post('/customer-portal', authenticateToken, async (req, res) => {
+  try {
+    // Pour l'instant, nous utilisons l'email du token JWT
+    // Dans une vraie application, vous devriez utiliser le stripeCustomerId de l'utilisateur
+    const user = await User.findOne({ email: req.user?.email });
+    
+    if (!user || !user.stripeCustomerId) {
+      return res.status(400).json({ error: 'Aucun abonnement trouvé' });
+    }
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: user.stripeCustomerId,
+      return_url: process.env.BASE_URL,
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Erreur portail client:', error);
+    res.status(500).json({ error: 'Erreur lors de la création du portail client' });
+  }
 });
 
 // Webhook Stripe pour traiter les événements
