@@ -895,8 +895,28 @@ async function init() {
       document.getElementById('mobile-btn-portal').style.display = 'none';
       document.getElementById('admin-panel').style.display = 'none';
       
-      // Afficher le CTA pour devenir VIP
-      document.getElementById('hero-ctas-guest').style.display = 'flex';
+      // Pour les utilisateurs standards connectés, on peut afficher un message personnalisé
+      // ou cacher les CTAs invités et montrer un bouton pour devenir VIP
+      document.getElementById('hero-ctas-guest').style.display = 'none'; // Cacher les CTAs invités
+      
+      // Créer un message personnalisé pour les utilisateurs standards connectés
+      const heroContainer = document.querySelector('.hero');
+      const existingCustomMessage = document.getElementById('hero-user-message');
+      
+      if (!existingCustomMessage) {
+        const customMessage = document.createElement('div');
+        customMessage.id = 'hero-user-message';
+        customMessage.className = 'hero-ctas';
+        customMessage.style.display = 'flex';
+        customMessage.innerHTML = `
+          <div style="text-align:center;">
+            <h3 style="color:var(--text);margin-bottom:15px;">👤 Bienvenue ${user.username} !</h3>
+            <p style="color:var(--muted);margin-bottom:20px;">Vous êtes connecté en tant que membre Standard</p>
+            <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Devenir VIP — 10,00€/mois</button>
+          </div>
+        `;
+        heroContainer.appendChild(customMessage);
+      }
     }
     
     // Charger le profil utilisateur
@@ -915,6 +935,12 @@ async function init() {
     document.getElementById('section-vip').style.display  = 'none';
     document.getElementById('section-lock').style.display = 'block';
     document.getElementById('admin-panel').style.display = 'none';
+    
+    // Nettoyer le message personnalisé s'il existe
+    const customMessage = document.getElementById('hero-user-message');
+    if (customMessage) {
+      customMessage.remove();
+    }
   }
 
   loadPublicPronos();
