@@ -52,28 +52,36 @@ router.get('/webhook/test', (req, res) => {
 // Route pour accéder au portail client Stripe
 router.post('/customer-portal', authenticateToken, async (req, res) => {
   try {
+    console.log('🔍 Portail client - User email:', req.user.email);
+    
     const user = await User.findOne({ email: req.user.email });
+    console.log('🔍 Portail client - User found:', user ? 'YES' : 'NO');
+    console.log('🔍 Portail client - StripeCustomerId:', user?.stripeCustomerId || 'NONE');
     
     if (!user) {
+      console.log('❌ Portail client - Utilisateur non trouvé');
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
 
     // Si l'utilisateur n'a pas de stripeCustomerId, on le redirige vers la page de paiement
     if (!user.stripeCustomerId) {
+      console.log('ℹ️ Portail client - Pas de stripeCustomerId, redirection vers page d\'accueil');
       return res.json({ 
         url: process.env.BASE_URL,
         message: 'Aucun abonnement actif. Vous pouvez vous abonner depuis la page d\'accueil.'
       });
     }
 
+    console.log('✅ Portail client - Création session portail pour customer:', user.stripeCustomerId);
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: process.env.BASE_URL,
     });
 
+    console.log('✅ Portail client - Session créée:', session.url);
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Erreur portail client:', error);
+    console.error('❌ Erreur portail client:', error);
     res.status(500).json({ error: 'Erreur lors de la création du portail client' });
   }
 });
