@@ -22,12 +22,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB connecté'))
   .catch(err => console.error('❌ MongoDB erreur:', err));
 
 app.use('/auth',       require('./routes/auth'));
 app.use('/api/pronos', require('./routes/pronos'));
+app.use('/api/payment', require('./routes/payment'));
 
 app.get('/logout', (req, res) => {
   req.logout(() => {

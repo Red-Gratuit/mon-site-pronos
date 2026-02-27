@@ -1,0 +1,69 @@
+const express = require('express');
+const router = express.Router();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Route pour créer une session de paiement Stripe
+router.post('/create-checkout', async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [{
+        price: process.env.STRIPE_PRICE_ID,
+        quantity: 1,
+      }],
+      success_url: `${process.env.BASE_URL}/payment/success`,
+      cancel_url: `${process.env.BASE_URL}/payment/cancel`,
+      customer_email: req.user ? req.user.email : undefined,
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Erreur Stripe:', error);
+    res.status(500).json({ error: 'Erreur lors de la création de la session de paiement' });
+  }
+});
+
+// Webhook Stripe pour traiter les événements
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.log(`Erreur signature webhook: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Gérer les événements
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      console.log('Session complétée:', session.id);
+      
+      // Mettre à jour le statut VIP de l'utilisateur
+      if (session.customer_email) {
+        // Ici vous devriez mettre à jour votre base de données
+        console.log(`Utilisateur ${session.customer_email} devient VIP`);
+      }
+      break;
+      
+    case 'customer.subscription.deleted':
+      const subscription = event.data.object;
+      console.log('Abonnement annulé:', subscription.id);
+      
+      // Retirer le statut VIP
+      if (subscription.customer_email) {
+        console.log(`Utilisateur ${subscription.customer_email} n'est plus VIP`);
+      }
+      break;
+      
+    default:
+      console.log(`Événement non géré: ${event.type}`);
+  }
+
+  res.json({ received: true });
+});
+
+module.exports = router;
