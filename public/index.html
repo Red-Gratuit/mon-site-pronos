@@ -831,35 +831,63 @@ async function init() {
   const user = TOKEN ? parseJWT(TOKEN) : null;
 
   if (user) {
+    // Masquer les éléments pour invités
     document.getElementById('nav-guest').style.display    = 'none';
+    document.getElementById('mobile-nav-guest').style.display = 'none';
+    
+    // Afficher les éléments pour utilisateurs connectés
     document.getElementById('nav-user').style.display     = 'flex';
+    document.getElementById('mobile-nav-user').style.display = 'flex';
     document.getElementById('nav-username').style.display = 'inline-block';
+    document.getElementById('mobile-nav-username').style.display = 'block';
     document.getElementById('nav-username').textContent   = '👤 ' + user.username;
+    document.getElementById('mobile-nav-username').textContent = '👤 ' + user.username;
+    
+    // Masquer les CTAs invités
     document.getElementById('hero-ctas-guest').style.display = 'none';
     
-    // Afficher le message VIP seulement si l'utilisateur est vraiment VIP
+    // Gérer l'affichage selon le statut VIP
     if (user.isVIP || user.isAdmin) {
+      // Utilisateur VIP ou Admin
       document.getElementById('hero-ctas-vip').style.display = 'block';
-    } else {
-      document.getElementById('hero-ctas-vip').style.display = 'none';
-      // Pour les non-VIP, on peut afficher un bouton pour devenir VIP
-      document.getElementById('hero-ctas-guest').style.display = 'flex';
-    }
-
-    if (user.isVIP || user.isAdmin) {
       document.getElementById('section-vip').style.display  = 'block';
       document.getElementById('section-lock').style.display = 'none';
       document.getElementById('btn-portal').style.display   = 'inline-block';
+      document.getElementById('mobile-btn-portal').style.display = 'block';
       loadVIPPronos();
-    }
-
-    if (user.isAdmin) {
-      document.getElementById('admin-panel').style.display = 'block';
-      loadAdminTable();
+      
+      if (user.isAdmin) {
+        document.getElementById('admin-panel').style.display = 'block';
+        loadAdminTable();
+      }
+    } else {
+      // Utilisateur standard (non-VIP)
+      document.getElementById('hero-ctas-vip').style.display = 'none';
+      document.getElementById('section-vip').style.display  = 'none';
+      document.getElementById('section-lock').style.display = 'block';
+      document.getElementById('btn-portal').style.display   = 'none';
+      document.getElementById('mobile-btn-portal').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'none';
+      
+      // Afficher le CTA pour devenir VIP
+      document.getElementById('hero-ctas-guest').style.display = 'flex';
     }
     
     // Charger le profil utilisateur
     loadUserProfile();
+  } else {
+    // Utilisateur non connecté - afficher les éléments invités
+    document.getElementById('nav-guest').style.display    = 'flex';
+    document.getElementById('mobile-nav-guest').style.display = 'flex';
+    document.getElementById('nav-user').style.display     = 'none';
+    document.getElementById('mobile-nav-user').style.display = 'none';
+    document.getElementById('nav-username').style.display = 'none';
+    document.getElementById('mobile-nav-username').style.display = 'none';
+    document.getElementById('hero-ctas-guest').style.display = 'flex';
+    document.getElementById('hero-ctas-vip').style.display = 'none';
+    document.getElementById('section-vip').style.display  = 'none';
+    document.getElementById('section-lock').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
   }
 
   loadPublicPronos();
@@ -1154,6 +1182,7 @@ function loadUserProfile() {
   const manageBtn = document.getElementById('profile-manage-btn');
   
   if (user.isVIP || user.isAdmin) {
+    // Utilisateur VIP ou Admin
     statusElement.style.background = 'rgba(0,201,122,0.1)';
     statusElement.style.color = 'var(--green)';
     statusElement.style.border = '1px solid rgba(0,201,122,0.2)';
@@ -1166,6 +1195,7 @@ function loadUserProfile() {
     document.getElementById('btn-portal').style.display = 'inline-block';
     document.getElementById('mobile-btn-portal').style.display = 'block';
   } else {
+    // Utilisateur standard (non-VIP)
     statusElement.style.background = 'rgba(240,165,0,0.1)';
     statusElement.style.color = 'var(--gold)';
     statusElement.style.border = '1px solid rgba(240,165,0,0.2)';
@@ -1183,10 +1213,10 @@ function loadUserProfile() {
   const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'Aujourd\'hui';
   document.getElementById('profile-member-since').textContent = joinDate;
   
-  // Mettre à jour les éléments mobiles
+  // Mettre à jour les éléments mobiles et desktop
   document.getElementById('nav-guest').style.display = 'none';
-  document.getElementById('nav-user').style.display = 'flex';
   document.getElementById('mobile-nav-guest').style.display = 'none';
+  document.getElementById('nav-user').style.display = 'flex';
   document.getElementById('mobile-nav-user').style.display = 'flex';
   document.getElementById('nav-username').style.display = 'inline-block';
   document.getElementById('mobile-nav-username').style.display = 'block';
