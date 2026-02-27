@@ -58,10 +58,13 @@ router.get('/webhook/test', (req, res) => {
 // Route pour accéder au portail client Stripe
 router.post('/customer-portal', authenticateToken, async (req, res) => {
   try {
+    console.log('🔍 Portail client - User ID:', req.user.id);
     console.log('🔍 Portail client - User email:', req.user.email);
     
-    let user = await User.findOne({ email: req.user.email });
+    // Chercher par ID au lieu d'email (plus fiable)
+    let user = await User.findById(req.user.id);
     console.log('🔍 Portail client - User found:', user ? 'YES' : 'NO');
+    console.log('🔍 Portail client - User email from DB:', user?.email);
     console.log('🔍 Portail client - StripeCustomerId:', user?.stripeCustomerId || 'NONE');
     
     if (!user) {

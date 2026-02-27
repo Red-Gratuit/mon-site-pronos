@@ -15,6 +15,7 @@ router.get('/google/callback',
       {
         id:       req.user._id,
         username: req.user.username,
+        email:    req.user.email,
         isVIP:    req.user.isVIP,
         isAdmin:  req.user.isAdmin
       },
