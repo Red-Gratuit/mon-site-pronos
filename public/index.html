@@ -1370,6 +1370,155 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 // Charger les matchs en direct
 async function loadLiveMatches() {
   try {
+    const user = TOKEN ? parseJWT(TOKEN) : null;
+    
+    // Récupérer les pronostics de l'utilisateur
+    const userPronos = user ? await getUserPronos() : [];
+    
+    // Récupérer les matchs du jour via API
+    const liveMatches = await getRealLiveMatches(userPronos);
+    
+    const container = document.getElementById('live-matches');
+    
+    if (!liveMatches.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚡</div>
+          <p>Aucun match en direct pour le moment</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = liveMatches.map(match => `
+      <div class="live-match-card">
+        <div class="live-header">
+          <div class="live-teams">
+            <span class="team-name">${match.teams.home}</span>
+            <span class="vs">VS</span>
+            <span class="team-name">${match.teams.away}</span>
+          </div>
+          <div class="live-score">
+            <span class="score-home">${match.score.home}</span>
+            <span class="score-separator">-</span>
+            <span class="score-away">${match.score.away}</span>
+          </div>
+        </div>
+        <div class="live-status">
+          <span class="live-indicator">${match.status === 'LIVE' ? '● LIVE' : '⏱️ ' + match.status}</span>
+          <span class="live-time">${match.minute ? match.minute + "'" : ''}</span>
+        </div>
+        <div class="live-prono">
+          <span class="prono-label">Votre prono:</span>
+          <span class="prono-value">${match.prono}</span>
+          <span class="prono-status status-${match.pronoStatus}">
+            ${getPronoStatusLabel(match.pronoStatus)}
+          </span>
+        </div>
+      </div>
+    `).join('');
+    
+    // Auto-rafraîchissement toutes les 30 secondes pour les matchs live
+    const hasLiveMatches = liveMatches.some(m => m.status === 'LIVE');
+    if (hasLiveMatches) {
+      setTimeout(() => loadLiveMatches(), 30000);
+    }
+    
+  } catch (error) {
+    console.error('Erreur chargement matchs live:', error);
+    // Fallback vers la version simulée si l'API ne fonctionne pas
+    loadSimulatedMatches();
+  }
+}
+
+// Obtenir les pronostics de l'utilisateur
+async function getUserPronos() {
+  try {
+    const res = await fetch(`${API}/api/pronos/user`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error('Erreur pronostics utilisateur:', error);
+    return [];
+  }
+}
+
+// Obtenir les vrais matchs en direct (avec API)
+async function getRealLiveMatches(userPronos) {
+  try {
+    // Appel à l'API football (à configurer avec vraie API)
+    const response = await fetch(`${API}/api/matches/live`);
+    const matches = await response.json();
+    
+    // Filtrer et matcher avec les pronostics utilisateur
+    return matches.map(match => {
+      const userProno = userPronos.find(p => 
+        p.match.toLowerCase().includes(match.teams.home.toLowerCase()) ||
+        p.match.toLowerCase().includes(match.teams.away.toLowerCase())
+      );
+      
+      return {
+        ...match,
+        prono: userProno?.prono || 'Aucun prono',
+        pronoStatus: userProno ? analyzePronoResult(match, userProno.prono) : 'pending'
+      };
+    }).filter(match => match.prono !== 'Aucun prono');
+    
+  } catch (error) {
+    console.error('Erreur API matchs live:', error);
+    return [];
+  }
+}
+
+// Analyser le résultat d'un prono
+function analyzePronoResult(match, prono) {
+  const { home, away } = match.score;
+  const pronoLower = prono.toLowerCase();
+  
+  if (pronoLower.includes('victoire')) {
+    const homeTeam = match.teams.home.toLowerCase();
+    const awayTeam = match.teams.away.toLowerCase();
+    
+    if (pronoLower.includes(homeTeam)) {
+      return home > away ? 'winning' : 'losing';
+    } else if (pronoLower.includes(awayTeam)) {
+      return away > home ? 'winning' : 'losing';
+    }
+  }
+  
+  if (pronoLower.includes('nul') || pronoLower.includes('match nul')) {
+    return home === away ? 'winning' : 'losing';
+  }
+  
+  if (pronoLower.includes('plus de') || pronoLower.includes('over')) {
+    const total = home + away;
+    const line = parseFloat(prono.match(/[\d.]+/)?.[0] || '2.5');
+    return total > line ? 'winning' : 'losing';
+  }
+  
+  if (pronoLower.includes('moins de') || pronoLower.includes('under')) {
+    const total = home + away;
+    const line = parseFloat(prono.match(/[\d.]+/)?.[0] || '2.5');
+    return total < line ? 'winning' : 'losing';
+  }
+  
+  return 'pending';
+}
+
+// Obtenir le libellé du statut
+function getPronoStatusLabel(status) {
+  switch (status) {
+    case 'winning': return '✅ GAGNANT';
+    case 'losing': return '❌ PERDANT';
+    case 'pending': return '⏳ EN ATTENTE';
+    default: return '⏳ EN ATTENTE';
+  }
+}
+
+// Version simulée (fallback)
+async function loadSimulatedMatches() {
+  try {
     const res = await fetch(`${API}/api/matches`);
     const matches = await res.json();
     
@@ -1385,17 +1534,15 @@ async function loadLiveMatches() {
       return;
     }
     
-    // Simuler des scores et statuts pour démo
+    // Simulation pour démo
     const liveMatches = matches.map(match => {
-      const isLive = Math.random() > 0.5;
+      const isLive = Math.random() > 0.3;
       const scoreHome = Math.floor(Math.random() * 4);
       const scoreAway = Math.floor(Math.random() * 4);
       const minute = isLive ? Math.floor(Math.random() * 90) + 1 : 90;
       
-      // Déterminer si le prono est gagnant/perdu
       let pronoStatus = 'pending';
       if (isLive && minute > 80) {
-        // Logique simplifiée pour déterminer le résultat
         if (match.prono.toLowerCase().includes('victoire')) {
           const homeTeam = match.match.split('vs')[0].trim();
           const isHomeWinning = scoreHome > scoreAway;
@@ -1405,9 +1552,12 @@ async function loadLiveMatches() {
       
       return {
         ...match,
-        isLive,
-        scoreHome,
-        scoreAway,
+        teams: {
+          home: match.match.split('vs')[0].trim(),
+          away: match.match.split('vs')[1].trim()
+        },
+        score: { home: scoreHome, away: scoreAway },
+        status: isLive ? 'LIVE' : 'FINISHED',
         minute,
         pronoStatus
       };
@@ -1417,39 +1567,32 @@ async function loadLiveMatches() {
       <div class="live-match-card">
         <div class="live-header">
           <div class="live-teams">
-            <span class="team-name">${match.match.split('vs')[0].trim()}</span>
+            <span class="team-name">${match.teams.home}</span>
             <span class="vs">VS</span>
-            <span class="team-name">${match.match.split('vs')[1].trim()}</span>
+            <span class="team-name">${match.teams.away}</span>
           </div>
           <div class="live-score">
-            <span class="score-home">${match.scoreHome}</span>
+            <span class="score-home">${match.score.home}</span>
             <span class="score-separator">-</span>
-            <span class="score-away">${match.scoreAway}</span>
+            <span class="score-away">${match.score.away}</span>
           </div>
         </div>
         <div class="live-status">
-          <span class="live-indicator">${match.isLive ? '● LIVE' : '⏱️ TERMINÉ'}</span>
+          <span class="live-indicator">${match.status === 'LIVE' ? '● LIVE' : '⏱️ TERMINÉ'}</span>
           <span class="live-time">${match.minute}'</span>
         </div>
         <div class="live-prono">
           <span class="prono-label">Votre prono:</span>
           <span class="prono-value">${match.prono}</span>
           <span class="prono-status status-${match.pronoStatus}">
-            ${match.pronoStatus === 'winning' ? '✅ GAGNANT' : match.pronoStatus === 'losing' ? '❌ PERDANT' : '⏳ EN ATTENTE'}
+            ${getPronoStatusLabel(match.pronoStatus)}
           </span>
         </div>
       </div>
     `).join('');
     
-    // Auto-rafraîchissement toutes les 30 secondes pour les matchs live
-    setTimeout(() => {
-      if (liveMatches.some(m => m.isLive)) {
-        loadLiveMatches();
-      }
-    }, 30000);
-    
   } catch (error) {
-    console.error('Erreur chargement matchs live:', error);
+    console.error('Erreur simulation:', error);
   }
 }
 
