@@ -701,12 +701,26 @@ function goToStripe() {
   closeModal('modal-payment');
   showToast('🔄 Redirection vers Stripe...', 'info');
   
-  // Créer un formulaire pour faire un POST
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/api/payment/create-checkout';
-  document.body.appendChild(form);
-  form.submit();
+  // Faire une requête POST pour créer la session
+  fetch('/api/payment/create-checkout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.url) {
+      // Rediriger vers Stripe
+      window.location.href = data.url;
+    } else {
+      showToast('❌ Erreur lors de la création du paiement', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Erreur:', error);
+    showToast('❌ Erreur de connexion', 'error');
+  });
 }
 
 function showToast(msg, type = 'info') {
