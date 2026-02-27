@@ -32,6 +32,7 @@ app.use('/api/pronos', require('./routes/pronos'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/user',    require('./routes/user'));
 app.use('/api/history', require('./routes/history'));
+app.use('/api/matches', require('./routes/matches'));
 
 app.get('/logout', (req, res) => {
   req.logout(() => {
