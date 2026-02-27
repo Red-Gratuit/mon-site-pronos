@@ -836,7 +836,14 @@ function openCustomerPortal() {
   .then(response => response.json())
   .then(data => {
     if (data.url) {
-      window.location.href = data.url;
+      if (data.message) {
+        showToast(data.message, 'info');
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 2000);
+      } else {
+        window.location.href = data.url;
+      }
     } else {
       showToast('❌ Erreur lors de la création du portail', 'error');
     }

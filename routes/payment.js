@@ -52,12 +52,18 @@ router.get('/webhook/test', (req, res) => {
 // Route pour accéder au portail client Stripe
 router.post('/customer-portal', authenticateToken, async (req, res) => {
   try {
-    // Pour l'instant, nous utilisons l'email du token JWT
-    // Dans une vraie application, vous devriez utiliser le stripeCustomerId de l'utilisateur
-    const user = await User.findOne({ email: req.user?.email });
+    const user = await User.findOne({ email: req.user.email });
     
-    if (!user || !user.stripeCustomerId) {
-      return res.status(400).json({ error: 'Aucun abonnement trouvé' });
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    // Si l'utilisateur n'a pas de stripeCustomerId, on le redirige vers la page de paiement
+    if (!user.stripeCustomerId) {
+      return res.json({ 
+        url: process.env.BASE_URL,
+        message: 'Aucun abonnement actif. Vous pouvez vous abonner depuis la page d\'accueil.'
+      });
     }
 
     const session = await stripe.billingPortal.sessions.create({
