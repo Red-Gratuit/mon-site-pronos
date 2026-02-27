@@ -512,7 +512,15 @@ async function init() {
     document.getElementById('nav-username').style.display = 'inline-block';
     document.getElementById('nav-username').textContent   = '👤 ' + user.username;
     document.getElementById('hero-ctas-guest').style.display = 'none';
-    document.getElementById('hero-ctas-vip').style.display   = 'block';
+    
+    // Afficher le message VIP seulement si l'utilisateur est vraiment VIP
+    if (user.isVIP || user.isAdmin) {
+      document.getElementById('hero-ctas-vip').style.display = 'block';
+    } else {
+      document.getElementById('hero-ctas-vip').style.display = 'none';
+      // Pour les non-VIP, on peut afficher un bouton pour devenir VIP
+      document.getElementById('hero-ctas-guest').style.display = 'flex';
+    }
 
     if (user.isVIP || user.isAdmin) {
       document.getElementById('section-vip').style.display  = 'block';
