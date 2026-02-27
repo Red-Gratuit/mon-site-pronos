@@ -22,6 +22,16 @@ router.get('/vip', auth, isVIP, async (req, res) => {
   }
 });
 
+// Obtenir les pronostics de l'utilisateur connecté
+router.get('/user', auth, async (req, res) => {
+  try {
+    const pronos = await Prono.find({ userId: req.user.id }).sort({ date: -1 });
+    res.json(pronos);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // Tous les pronos (admin)
 router.get('/all', auth, isAdmin, async (req, res) => {
   try {
