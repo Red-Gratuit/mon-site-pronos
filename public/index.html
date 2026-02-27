@@ -835,13 +835,17 @@ function openCustomerPortal() {
   })
   .then(response => response.json())
   .then(data => {
+    console.log('🔍 Client - Réponse portail:', data);
+    
     if (data.url) {
       if (data.message) {
         showToast(data.message, 'info');
         setTimeout(() => {
+          console.log('🔍 Client - Redirection vers:', data.url);
           window.location.href = data.url;
         }, 2000);
       } else {
+        console.log('🔍 Client - Redirection directe vers:', data.url);
         window.location.href = data.url;
       }
     } else {
@@ -849,7 +853,7 @@ function openCustomerPortal() {
     }
   })
   .catch(error => {
-    console.error('Erreur:', error);
+    console.error('❌ Client - Erreur portail:', error);
     showToast('❌ Erreur de connexion', 'error');
   });
 }
