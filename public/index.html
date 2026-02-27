@@ -187,6 +187,30 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 40px
 .pagination button:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
 .pagination button:disabled{opacity:0.5;cursor:not-allowed;}
 #page-info{color:var(--muted);font-weight:500;}
+
+/* VIP BONUS SECTION */
+.vip-bonus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:20px 0;}
+.bonus-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:15px;transition:all 0.3s;}
+.bonus-card:hover{transform:translateY(-2px);border-color:var(--gold);}
+.bonus-icon{font-size:2rem;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:rgba(240,165,0,0.1);border-radius:10px;flex-shrink:0;}
+.bonus-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.bonus-desc{font-size:0.85rem;color:var(--muted);line-height:1.4;}
+
+/* PERFORMANCE SECTION */
+.performance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin:20px 0;}
+.perf-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;text-align:center;transition:all 0.3s;}
+.perf-card:hover{transform:translateY(-2px);border-color:var(--gold);}
+.perf-number{font-size:2.5rem;font-weight:900;color:var(--gold);margin-bottom:5px;}
+.perf-label{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:5px;}
+.perf-desc{font-size:0.8rem;color:var(--muted);}
+
+/* TESTIMONIALS SECTION */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin:20px 0;}
+.testimonial-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s;}
+.testimonial-card:hover{transform:translateY(-2px);border-color:var(--gold);}
+.testimonial-stars{font-size:1rem;margin-bottom:10px;}
+.testimonial-text{font-size:0.9rem;color:var(--text);line-height:1.4;margin-bottom:15px;font-style:italic;}
+.testimonial-author{font-size:0.8rem;color:var(--muted);text-align:right;font-weight:600;}
 .divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:0.8rem;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
@@ -482,6 +506,98 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
       </div>
       <div class="pronos-list" id="pronos-vip">
         <div class="empty-state"><div class="empty-icon">⭐</div><p>Aucun prono VIP pour le moment.</p></div>
+      </div>
+      
+      <!-- BONUS SECTION VIP -->
+      <div style="margin-top:30px;">
+        <div class="sec-title">
+          <h3>🎯 Avantages VIP Exclusifs</h3>
+        </div>
+        <div class="vip-bonus-grid">
+          <div class="bonus-card">
+            <div class="bonus-icon">📈</div>
+            <div class="bonus-title">Analyses Détaillées</div>
+            <div class="bonus-desc">Étude complète des matchs avec statistiques avancées</div>
+          </div>
+          <div class="bonus-card">
+            <div class="bonus-icon">⚡</div>
+            <div class="bonus-title">Alertes Instantanées</div>
+            <div class="bonus-desc">Notifications en temps réel pour tous les pronos</div>
+          </div>
+          <div class="bonus-card">
+            <div class="bonus-icon">🏆</div>
+            <div class="bonus-title">Conseils d'Experts</div>
+            <div class="bonus-desc">Stratégies de paris et gestion du bankroll</div>
+          </div>
+          <div class="bonus-card">
+            <div class="bonus-icon">📊</div>
+            <div class="bonus-title">Statistiques Premium</div>
+            <div class="bonus-desc">Accès à nos algorithmes de prédiction exclusifs</div>
+          </div>
+          <div class="bonus-card">
+            <div class="bonus-icon">💬</div>
+            <div class="bonus-title">Chat Privé</div>
+            <div class="bonus-desc">Échanges directs avec nos experts pronostiqueurs</div>
+          </div>
+          <div class="bonus-card">
+            <div class="bonus-icon">📱</div>
+            <div class="bonus-title">Application Mobile</div>
+            <div class="bonus-desc">Pronostics où que vous soyez, quand vous voulez</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- PERFORMANCE SECTION -->
+      <div style="margin-top:30px;">
+        <div class="sec-title">
+          <h3>📊 Nos Performances VIP</h3>
+        </div>
+        <div class="performance-grid">
+          <div class="perf-card">
+            <div class="perf-number">74%</div>
+            <div class="perf-label">Taux de réussite</div>
+            <div class="perf-desc">Sur les 12 derniers mois</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-number">+38%</div>
+            <div class="perf-label">ROI moyen</div>
+            <div class="perf-desc">Retour sur investissement</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-number">156</div>
+            <div class="perf-label">Pronos/mois</div>
+            <div class="perf-desc">Moyenne mensuelle</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-number">2.85</div>
+            <div class="perf-label">Cote moyenne</div>
+            <div class="perf-desc">Optimisée pour le profit</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- TESTIMONIALS SECTION -->
+      <div style="margin-top:30px;">
+        <div class="sec-title">
+          <h3>💬 Témoignages Membres VIP</h3>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <div class="testimonial-text">"Le meilleur investissement que j'ai fait ! 74% de réussite, incroyable !"</div>
+            <div class="testimonial-author">- Marc L., Membre depuis 6 mois</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <div class="testimonial-text">"Les analyses détaillées m'ont fait gagner plus de 2000€ ce mois-ci !"</div>
+            <div class="testimonial-author">- Sophie M., Membre depuis 3 mois</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <div class="testimonial-text">"Alertes instantanées, analyses premium... Tout est parfait !"</div>
+            <div class="testimonial-author">- Thomas R., Membre depuis 1 an</div>
+          </div>
+        </div>
       </div>
     </div>
 
