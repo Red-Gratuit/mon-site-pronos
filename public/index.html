@@ -327,6 +327,17 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:0 40px
 .status-winning{background:rgba(0,201,122,0.1);color:var(--green);border:1px solid rgba(0,201,122,0.2);}
 .status-losing{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
 .status-pending{background:rgba(240,165,0,0.1);color:var(--gold);border:1px solid rgba(240,165,0,0.2);}
+
+/* LIVE ANIMATIONS */
+.live-pulse{animation:livePulse 2s infinite;}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(0,201,122,0.4);}50%{box-shadow:0 0 0 10px rgba(0,201,122,0.4);}}
+.live-pulse-dot{animation:liveDot 1.5s infinite;}
+@keyframes liveDot{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.live-progress{margin-top:10px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));width:100%;animation:progressBar 30s linear infinite;}
+@keyframes progressBar{0%{width:0%;}100%{width:100%;}}
+.score.winning{color:var(--green);font-weight:900;animation:scoreGlow 1s ease-in-out;}
+@keyframes scoreGlow{0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);}}
 .divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:0.8rem;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
@@ -1403,7 +1414,7 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
   bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
 });
 
-// Charger les matchs en direct
+// Charger les matchs en direct (VERSION AUTOMATIQUE)
 async function loadLiveMatches() {
   try {
     const user = TOKEN ? parseJWT(TOKEN) : null;
@@ -1411,7 +1422,7 @@ async function loadLiveMatches() {
     // Récupérer les pronostics de l'utilisateur
     const userPronos = user ? await getUserPronos() : [];
     
-    // Récupérer les matchs du jour via API
+    // Récupérer les vrais matchs du jour via API Sports
     const liveMatches = await getRealLiveMatches(userPronos);
     
     const container = document.getElementById('live-matches');
@@ -1421,13 +1432,14 @@ async function loadLiveMatches() {
         <div class="empty-state">
           <div class="empty-icon">⚡</div>
           <p>Aucun match en direct pour le moment</p>
+          <p style="font-size:0.8rem;margin-top:10px;">Les matchs apparaîtront automatiquement</p>
         </div>
       `;
       return;
     }
     
     container.innerHTML = liveMatches.map(match => `
-      <div class="live-match-card">
+      <div class="live-match-card ${match.status === 'LIVE' ? 'live-pulse' : ''}">
         <div class="live-header">
           <div class="live-teams">
             <span class="team-name">${match.teams.home}</span>
@@ -1435,13 +1447,13 @@ async function loadLiveMatches() {
             <span class="team-name">${match.teams.away}</span>
           </div>
           <div class="live-score">
-            <span class="score-home">${match.score.home}</span>
+            <span class="score-home ${match.score.home > match.score.away ? 'winning' : ''}">${match.score.home}</span>
             <span class="score-separator">-</span>
-            <span class="score-away">${match.score.away}</span>
+            <span class="score-away ${match.score.away > match.score.home ? 'winning' : ''}">${match.score.away}</span>
           </div>
         </div>
         <div class="live-status">
-          <span class="live-indicator">${match.status === 'LIVE' ? '● LIVE' : '⏱️ ' + match.status}</span>
+          <span class="live-indicator ${match.status === 'LIVE' ? 'live-pulse-dot' : ''}">${match.status === 'LIVE' ? '● LIVE' : '⏱️ ' + match.status}</span>
           <span class="live-time">${match.minute ? match.minute + "'" : ''}</span>
         </div>
         <div class="live-prono">
@@ -1451,20 +1463,60 @@ async function loadLiveMatches() {
             ${getPronoStatusLabel(match.pronoStatus)}
           </span>
         </div>
+        ${match.status === 'LIVE' ? '<div class="live-progress"><div class="progress-bar"></div></div>' : ''}
       </div>
     `).join('');
     
-    // Auto-rafraîchissement toutes les 30 secondes pour les matchs live
+    // Auto-rafraîchissement intelligent
     const hasLiveMatches = liveMatches.some(m => m.status === 'LIVE');
     if (hasLiveMatches) {
+      // Pendant les matchs live : rafraîchissement toutes les 30 secondes
       setTimeout(() => loadLiveMatches(), 30000);
+    } else {
+      // Si pas de match live : rafraîchissement toutes les 2 minutes
+      setTimeout(() => loadLiveMatches(), 120000);
     }
+    
+    // Notification si changement de score
+    checkScoreChanges(liveMatches);
     
   } catch (error) {
     console.error('Erreur chargement matchs live:', error);
     // Fallback vers la version simulée si l'API ne fonctionne pas
     loadSimulatedMatches();
   }
+}
+
+// Vérifier les changements de score pour notifications
+let previousScores = {};
+async function checkScoreChanges(currentMatches) {
+  currentMatches.forEach(match => {
+    const matchKey = `${match.teams.home}-${match.teams.away}`;
+    const currentScore = `${match.score.home}-${match.score.away}`;
+    
+    if (previousScores[matchKey] && previousScores[matchKey] !== currentScore) {
+      // But marqué ! Notification
+      showGoalNotification(match);
+    }
+    
+    previousScores[matchKey] = currentScore;
+  });
+}
+
+// Notification de but
+function showGoalNotification(match) {
+  const scorer = match.score.home > match.score.away ? match.teams.home : match.teams.away;
+  showToast(`⚽ BUT ! ${scorer} marque ! Score: ${match.score.home}-${match.score.away}`, 'info');
+  
+  // Son de but (optionnel)
+  playGoalSound();
+}
+
+// Jouer un son de but (optionnel)
+function playGoalSound() {
+  // Vous pouvez ajouter un son ici si vous voulez
+  // const audio = new Audio('/goal-sound.mp3');
+  // audio.play();
 }
 
 // Obtenir les pronostics de l'utilisateur
