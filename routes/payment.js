@@ -54,7 +54,7 @@ router.post('/customer-portal', authenticateToken, async (req, res) => {
   try {
     console.log('🔍 Portail client - User email:', req.user.email);
     
-    const user = await User.findOne({ email: req.user.email });
+    let user = await User.findOne({ email: req.user.email });
     console.log('🔍 Portail client - User found:', user ? 'YES' : 'NO');
     console.log('🔍 Portail client - StripeCustomerId:', user?.stripeCustomerId || 'NONE');
     
@@ -63,13 +63,31 @@ router.post('/customer-portal', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
 
-    // Si l'utilisateur n'a pas de stripeCustomerId, on le redirige vers la page de paiement
+    // Si l'utilisateur n'a pas de stripeCustomerId, on le crée
     if (!user.stripeCustomerId) {
-      console.log('ℹ️ Portail client - Pas de stripeCustomerId, redirection vers page d\'accueil');
-      return res.json({ 
-        url: process.env.BASE_URL,
-        message: 'Aucun abonnement actif. Vous pouvez vous abonner depuis la page d\'accueil.'
-      });
+      console.log('ℹ️ Portail client - Création stripeCustomerId pour:', user.email);
+      
+      try {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user._id.toString()
+          }
+        });
+        
+        // Mettre à jour l'utilisateur avec le nouveau stripeCustomerId
+        user = await User.findByIdAndUpdate(
+          user._id,
+          { stripeCustomerId: customer.id },
+          { new: true }
+        );
+        
+        console.log('✅ Portail client - StripeCustomerId créé:', customer.id);
+      } catch (stripeError) {
+        console.error('❌ Erreur création client Stripe:', stripeError);
+        return res.status(500).json({ error: 'Erreur lors de la création du client Stripe' });
+      }
     }
 
     console.log('✅ Portail client - Création session portail pour customer:', user.stripeCustomerId);
