@@ -424,9 +424,9 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
   </div>
 
   <div class="nav-center">
-    <button class="nav-link active">Accueil</button>
-    <button class="nav-link" onclick="scrollToStats()">Stats</button>
-    <button class="nav-link" onclick="scrollToHistory()">Historique</button>
+    <a href="/" class="nav-link active">Accueil</a>
+    <a href="/" class="nav-link">Stats</a>
+    <a href="/history" class="nav-link">Historique</a>
   </div>
 
   <div class="nav-right">
@@ -464,51 +464,6 @@ nav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(
   <div class="stat-item"><div class="stat-num blue" id="stat-wins">0</div><div class="stat-lab">Gagnés</div></div>
   <div class="stat-item"><div class="stat-num red" id="stat-losses">0</div><div class="stat-lab">Perdus</div></div>
   <div class="stat-item"><div class="stat-num purple" id="stat-members">158</div><div class="stat-lab">Membres VIP</div></div>
-</div>
-
-<!-- SECTION RÉSULTATS RAPIDES -->
-<div class="container">
-  <div class="section-header">
-    <h2>📊 Derniers Résultats</h2>
-    <p>Nos performances récentes</p>
-  </div>
-  
-  <div class="stats-grid" id="quick-stats">
-    <div class="stat-card">
-      <div class="stat-icon">📈</div>
-      <div class="stat-info">
-        <div class="stat-value" id="quick-success-rate">-</div>
-        <div class="stat-label">Taux de réussite</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🎯</div>
-      <div class="stat-info">
-        <div class="stat-value" id="quick-total">-</div>
-        <div class="stat-label">Total pronostics</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">✅</div>
-      <div class="stat-info">
-        <div class="stat-value" id="quick-wins">-</div>
-        <div class="stat-label">Pronostics gagnés</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">💰</div>
-      <div class="stat-info">
-        <div class="stat-value" id="quick-odds">-</div>
-        <div class="stat-label">Cote moyenne</div>
-      </div>
-    </div>
-  </div>
-  
-  <div style="text-align:center;margin-top:30px;">
-    <a href="/history" style="display:inline-block;">
-      <button class="btn-hero-primary">📊 Voir l'historique complet</button>
-    </a>
-  </div>
 </div>
 
 <!-- MAIN -->
@@ -678,7 +633,6 @@ async function init() {
 
   loadPublicPronos();
   updateStats();
-  loadQuickStats();
 }
 
 async function loadPublicPronos() {
@@ -775,7 +729,6 @@ async function addProno() {
       document.getElementById('a-type').value = 'public';
       showToast('✅ Prono publié !', 'success');
       loadAdminTable();
-      loadQuickStats();
     } else {
       const err = await res.json();
       showToast('❌ ' + (err.error || 'Erreur'), 'error');
@@ -791,7 +744,7 @@ async function setResultat(id, resultat) {
   });
   showToast(resultat === 'gagnant' ? '✅ Marqué gagnant !' : '❌ Marqué perdant !',
     resultat === 'gagnant' ? 'success' : 'error');
-  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats(); loadQuickStats();
+  loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats();
 }
 
 async function deleteProno(id) {
@@ -1003,25 +956,6 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 
 function scrollToStats() {
   document.getElementById('stats-anchor').scrollIntoView({ behavior: 'smooth' });
-}
-
-function scrollToHistory() {
-  window.location.href = '/history';
-}
-
-// Charger les statistiques rapides pour l'accueil
-async function loadQuickStats() {
-  try {
-    const res = await fetch(`${API}/api/history/stats`);
-    const stats = await res.json();
-    
-    document.getElementById('quick-success-rate').textContent = stats.tauxReussite + '%';
-    document.getElementById('quick-total').textContent = stats.total;
-    document.getElementById('quick-wins').textContent = stats.gagnants;
-    document.getElementById('quick-odds').textContent = stats.coteMoyenne;
-  } catch (error) {
-    console.error('Erreur stats rapides:', error);
-  }
 }
 
 // Variables globales pour l'historique
