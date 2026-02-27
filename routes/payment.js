@@ -25,6 +25,11 @@ router.post('/create-checkout', async (req, res) => {
   }
 });
 
+// Endpoint de test pour webhook
+router.get('/webhook/test', (req, res) => {
+  res.json({ message: 'Webhook endpoint is working!' });
+});
+
 // Webhook Stripe pour traiter les événements
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
