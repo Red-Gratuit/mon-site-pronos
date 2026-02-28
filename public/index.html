@@ -494,10 +494,30 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
   .mobile-actions .a-btn {
     flex: 1;
     max-width: 70px;
-    padding: 6px 2px;
-    font-size: 0.6rem;
+    padding: 8px 4px;
+    font-size: 0.8rem;
     text-align: center;
-    min-height: 30px;
+    min-height: 35px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--card2);
+    color: var(--text);
+    font-weight: 700;
+  }
+  .mobile-actions .a-btn.a-win {
+    border-color: var(--green);
+    background: rgba(0,255,136,0.1);
+    color: var(--green);
+  }
+  .mobile-actions .a-btn.a-lose {
+    border-color: var(--red);
+    background: rgba(255,0,68,0.1);
+    color: var(--red);
+  }
+  .mobile-actions .a-btn.a-del {
+    border-color: var(--error);
+    background: rgba(255,71,87,0.1);
+    color: var(--error);
   }
   .admin-table td {
     white-space: nowrap;
