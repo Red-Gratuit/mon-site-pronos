@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Mobile - E&V Prono</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* NEON CYBERPUNK DESIGN */
+:root{
+  --bg:#0a0a0f;
+  --card:#0f0f1a;
+  --card2:#1a1a2e;
+  --text:#ffffff;
+  --muted:#94a3b8;
+  --primary:#00ffff;
+  --secondary:#ff00ff;
+  --accent:#ffff00;
+  --success:#00ff88;
+  --warning:#ffaa00;
+  --error:#ff0044;
+  --gold:#ffd700;
+  --green:#00ff88;
+  --red:#ff0044;
+  --border:#2a2a4a;
+  --gradient:linear-gradient(135deg,#00ffff,#ff00ff);
+  --gradient-gold:linear-gradient(135deg,#ffd700,#ffaa00);
+  --gradient-success:linear-gradient(135deg,#00ff88,#00cc66);
+  --shadow:0 10px 40px rgba(0,255,255,0.3);
+  --shadow-lg:0 20px 60px rgba(255,0,255,0.4);
+  --glow:0 0 30px rgba(0,255,255,0.6);
+  --glow-gold:0 0 30px rgba(255,215,0,0.6);
+  --neon-cyan:0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(0,255,255,0.4);
+  --neon-magenta:0 0 20px rgba(255,0,255,0.8), 0 0 40px rgba(255,0,255,0.4);
+  --neon-yellow:0 0 20px rgba(255,255,0,0.8), 0 0 40px rgba(255,255,0,0.4);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+
+/* NAVBAR MOBILE */
+nav{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:60px;background:rgba(10,10,15,0.95);border-bottom:2px solid var(--primary);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;box-shadow:var(--neon-cyan);}
+.logo{display:flex;align-items:center;gap:8px;font-size:1.1rem;font-weight:800;letter-spacing:-0.5px;text-decoration:none;color:var(--text);position:relative;}
+.logo::before{content:'';position:absolute;inset:-2px;border:2px solid var(--primary);border-radius:12px;z-index:-1;box-shadow:var(--neon-cyan);animation:logoPulse 2s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.8;transform:scale(1.02);}}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:var(--neon-cyan);}
+.logo span{color:var(--primary);text-shadow:0 0 10px var(--primary);}
+.back-btn{padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.1);color:var(--text);border:1px solid var(--border);text-decoration:none;font-weight:600;font-size:0.85rem;transition:all 0.3s;}
+.back-btn:hover{background:rgba(255,255,255,0.2);transform:translateY(-1px);}
+
+/* MAIN CONTAINER */
+.main{padding:20px 16px;max-width:100%;margin:0 auto;}
+
+/* SECTION TITLE */
+.section-title{margin-bottom:20px;}
+.section-title h2{font-size:1.5rem;font-weight:900;color:var(--text);text-align:center;margin-bottom:8px;text-shadow:0 0 20px rgba(0,255,255,0.3);}
+.section-title p{color:var(--muted);text-align:center;font-size:0.9rem;}
+
+/* ADD PRONO FORM */
+.add-form{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;margin-bottom:30px;box-shadow:var(--neon-cyan);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;margin-bottom:6px;font-size:0.85rem;font-weight:600;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border-radius:12px;border:2px solid var(--border);background:var(--card2);color:var(--text);font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;transition:all 0.3s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,255,255,0.1);}
+.form-group textarea{resize:vertical;height:80px;}
+.btn-add{width:100%;padding:16px;border-radius:12px;background:var(--gradient-gold);color:#000;border:none;font-weight:800;font-size:1rem;cursor:pointer;transition:all 0.3s;box-shadow:var(--neon-yellow);}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(255,215,0,0.8);}
+
+/* PRONO LIST */
+.pronos-list{display:flex;flex-direction:column;gap:16px;}
+.prono-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;transition:all 0.3s;position:relative;overflow:hidden;}
+.prono-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--border);transition:all 0.3s;}
+.prono-card.vip-card{border-color:var(--gold);background:linear-gradient(135deg,#0f0f1a,#1a1a00);}
+.prono-card.vip-card::before{background:var(--gradient-gold);box-shadow:var(--neon-yellow);}
+.prono-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.prono-match{font-size:1.1rem;font-weight:900;color:var(--text);line-height:1.3;}
+.prono-type{display:inline-block;padding:4px 8px;border-radius:8px;font-size:0.7rem;font-weight:800;}
+.type-vip{background:var(--gradient-gold);color:#000;}
+.type-public{background:rgba(79,142,247,0.1);color:var(--blue);}
+.prono-details{margin-bottom:12px;}
+.prono-detail{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85rem;}
+.prono-detail span:first-child{color:var(--muted);}
+.prono-detail span:last-child{font-weight:600;color:var(--text);}
+.prono-analyse{color:var(--muted);font-size:0.85rem;line-height:1.5;padding:12px;background:var(--card2);border-radius:8px;border:1px solid var(--border);}
+.prono-result{margin-top:12px;}
+.result-badge{display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;}
+.result-gagnant{background:var(--gradient-success);color:#fff;}
+.result-perdant{background:linear-gradient(135deg,var(--error),#ff0066);color:#fff;}
+.result-pending{background:var(--card2);color:var(--muted);border:1px solid var(--border);}
+
+/* ACTION BUTTONS */
+.prono-actions{display:flex;gap:8px;margin-top:16px;}
+.action-btn{flex:1;padding:12px 8px;border-radius:10px;border:2px solid var(--border);background:var(--card2);color:var(--text);font-weight:700;font-size:0.8rem;text-align:center;cursor:pointer;transition:all 0.3s;}
+.action-btn.win{border-color:var(--green);background:rgba(0,255,136,0.1);color:var(--green);}
+.action-btn.lose{border-color:var(--red);background:rgba(255,0,68,0.1);color:var(--red);}
+.action-btn.delete{border-color:var(--error);background:rgba(255,71,87,0.1);color:var(--error);}
+.action-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;background:var(--card);border-radius:16px;border:1px dashed var(--border);}
+.empty-icon{font-size:3rem;margin-bottom:16px;}
+.empty-state p{color:var(--muted);font-size:0.9rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:0.85rem;font-weight:600;z-index:999;transform:translateY(100px);opacity:0;transition:all 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(0,201,122,0.3);color:var(--green);}
+.toast.error{border-color:rgba(255,71,87,0.3);color:var(--red);}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="/" class="back-btn">← Retour</a>
+  <div class="logo">
+    <div class="logo-icon">⚽</div>
+    E&V<span>Prono</span>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="section-title">
+    <h2>🛠️ Admin Mobile</h2>
+    <p>Gérez vos pronostics sur mobile</p>
+  </div>
+
+  <!-- ADD PRONO FORM -->
+  <div class="add-form">
+    <div class="form-group">
+      <label>Match</label>
+      <input type="text" id="match" placeholder="PSG vs OM"/>
+    </div>
+    <div class="form-group">
+      <label>Pronostic</label>
+      <input type="text" id="prono" placeholder="Victoire PSG"/>
+    </div>
+    <div class="form-group">
+      <label>Cote</label>
+      <input type="number" id="cote" placeholder="1.85" step="0.01"/>
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="type">
+        <option value="public">🌍 Public</option>
+        <option value="vip">⭐ VIP</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Analyse</label>
+      <textarea id="analyse" placeholder="Analyse détaillée du match..."></textarea>
+    </div>
+    <button class="btn-add" onclick="addProno()">🚀 Ajouter le prono</button>
+  </div>
+
+  <!-- PRONOS LIST -->
+  <div class="pronos-list" id="pronos-list">
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucun prono publié pour le moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let TOKEN = localStorage.getItem('token');
+
+// Vérifier si admin
+async function checkAdmin() {
+  try {
+    const res = await fetch(`${API}/api/me`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const data = await res.json();
+    if (!data.user || !data.user.isAdmin) {
+      window.location.href = '/';
+    }
+  } catch (error) {
+    window.location.href = '/';
+  }
+}
+
+// Charger les pronos
+async function loadPronos() {
+  try {
+    const res = await fetch(`${API}/api/pronos/all`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const pronos = await res.json();
+    const container = document.getElementById('pronos-list');
+    
+    if (!pronos.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p>Aucun prono publié pour le moment.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = pronos.map(prono => `
+      <div class="prono-card ${prono.type === 'vip' ? 'vip-card' : ''}">
+        <div class="prono-header">
+          <div class="prono-match">${prono.match}</div>
+          <div class="prono-type ${prono.type === 'vip' ? 'type-vip' : 'type-public'}">
+            ${prono.type === 'vip' ? '⭐ VIP' : '🌍 Public'}
+          </div>
+        </div>
+        <div class="prono-details">
+          <div class="prono-detail">
+            <span>Pronostic:</span>
+            <span>${prono.prono}</span>
+          </div>
+          <div class="prono-detail">
+            <span>Cote:</span>
+            <span>${prono.cote}</span>
+          </div>
+        </div>
+        ${prono.analyse ? `
+          <div class="prono-analyse">${prono.analyse}</div>
+        ` : ''}
+        <div class="prono-result">
+          <span class="result-badge result-${prono.resultat}">
+            ${prono.resultat === 'gagnant' ? '✅ Gagné' : 
+              prono.resultat === 'perdant' ? '❌ Perdu' : '⏳ En attente'}
+          </span>
+        </div>
+        <div class="prono-actions">
+          <button class="action-btn win" onclick="setResult('${prono._id}', 'gagnant')">✅</button>
+          <button class="action-btn lose" onclick="setResult('${prono._id}', 'perdant')">❌</button>
+          <button class="action-btn delete" onclick="deleteProno('${prono._id}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    showToast('Erreur de chargement', 'error');
+  }
+}
+
+// Ajouter un prono
+async function addProno() {
+  const body = {
+    match: document.getElementById('match').value.trim(),
+    prono: document.getElementById('prono').value.trim(),
+    cote: parseFloat(document.getElementById('cote').value),
+    type: document.getElementById('type').value,
+    analyse: document.getElementById('analyse').value.trim(),
+    resultat: 'pending'
+  };
+  
+  if (!body.match || !body.prono || !body.cote) {
+    showToast('Match, pronostic et cote sont requis', 'error');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/pronos/add`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${TOKEN}` 
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if (res.ok) {
+      // Vider le formulaire
+      document.getElementById('match').value = '';
+      document.getElementById('prono').value = '';
+      document.getElementById('cote').value = '';
+      document.getElementById('analyse').value = '';
+      document.getElementById('type').value = 'public';
+      
+      showToast('✅ Prono ajouté !', 'success');
+      loadPronos();
+    } else {
+      const err = await res.json();
+      showToast('❌ ' + (err.error || 'Erreur'), 'error');
+    }
+  } catch (error) {
+    showToast('❌ Erreur serveur', 'error');
+  }
+}
+
+// Mettre à jour le résultat
+async function setResult(id, resultat) {
+  try {
+    const res = await fetch(`${API}/api/pronos/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${TOKEN}` 
+      },
+      body: JSON.stringify({ resultat })
+    });
+    
+    if (res.ok) {
+      showToast('✅ Résultat mis à jour', 'success');
+      loadPronos();
+    } else {
+      showToast('❌ Erreur mise à jour', 'error');
+    }
+  } catch (error) {
+    showToast('❌ Erreur serveur', 'error');
+  }
+}
+
+// Supprimer un prono
+async function deleteProno(id) {
+  if (!confirm('Supprimer ce prono ?')) return;
+  
+  try {
+    const res = await fetch(`${API}/api/pronos/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    
+    if (res.ok) {
+      showToast('✅ Prono supprimé', 'success');
+      loadPronos();
+    } else {
+      showToast('❌ Erreur suppression', 'error');
+    }
+  } catch (error) {
+    showToast('❌ Erreur serveur', 'error');
+  }
+}
+
+// Toast notification
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Initialisation
+checkAdmin();
+loadPronos();
+</script>
+</body>
+</html>

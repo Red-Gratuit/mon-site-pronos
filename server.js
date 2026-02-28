@@ -47,6 +47,11 @@ app.get('/history', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'history.html'));
 });
 
+// Servir la page admin mobile
+app.get('/admin-mobile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-mobile.html'));
+});
+
 app.get('/api/me', (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
