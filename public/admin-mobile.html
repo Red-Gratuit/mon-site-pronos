@@ -181,10 +181,32 @@ async function checkAdmin() {
     });
     const data = await res.json();
     if (!data.user || !data.user.isAdmin) {
-      window.location.href = '/';
+      // Redirection douce sans refresh
+      document.body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;">
+          <div style="text-align:center;padding:20px;">
+            <div style="font-size:3rem;margin-bottom:20px;">🔒</div>
+            <h2 style="color:var(--text);margin-bottom:10px;">Accès Restreint</h2>
+            <p style="color:var(--muted);margin-bottom:20px;">Vous devez être administrateur pour accéder à cette page.</p>
+            <button onclick="window.close()" style="padding:12px 24px;background:var(--gradient);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Fermer</button>
+          </div>
+        </div>
+      `;
+      return false;
     }
+    return true;
   } catch (error) {
-    window.location.href = '/';
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;">
+        <div style="text-align:center;padding:20px;">
+          <div style="font-size:3rem;margin-bottom:20px;">🔑</div>
+          <h2 style="color:var(--text);margin-bottom:10px;">Non Connecté</h2>
+          <p style="color:var(--muted);margin-bottom:20px;">Vous devez être connecté pour accéder à cette page.</p>
+          <button onclick="window.close()" style="padding:12px 24px;background:var(--gradient);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Fermer</button>
+        </div>
+      </div>
+    `;
+    return false;
   }
 }
 
@@ -344,8 +366,14 @@ function showToast(msg, type = 'info') {
 }
 
 // Initialisation
-checkAdmin();
-loadPronos();
+async function init() {
+  const isAdmin = await checkAdmin();
+  if (isAdmin) {
+    await loadPronos();
+  }
+}
+
+init();
 </script>
 </body>
 </html>
