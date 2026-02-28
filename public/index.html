@@ -1132,7 +1132,7 @@ async function addProno() {
     return;
   }
   try {
-    const res = await fetch(`${API}/api/pronos`, {
+    const res = await fetch(`${API}/api/pronos/add`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
       body:    JSON.stringify(body)
