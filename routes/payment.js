@@ -3,6 +3,31 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
+// Configuration de l'email pour les notifications admin
+const adminEmailTransporter = nodemailer.createTransporter({
+  service: 'gmail',
+  auth: {
+    user: process.env.ADMIN_EMAIL,
+    pass: process.env.ADMIN_EMAIL_PASSWORD
+  }
+});
+
+// Fonction pour envoyer une notification admin
+async function sendAdminNotification(subject, message) {
+  try {
+    await adminEmailTransporter.sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: process.env.ADMIN_EMAIL,
+      subject: subject,
+      html: message
+    });
+    console.log('✅ Notification admin envoyée par email');
+  } catch (error) {
+    console.error('❌ Erreur notification admin:', error);
+  }
+}
 
 // Middleware pour vérifier le token
 const authenticateToken = (req, res, next) => {
@@ -153,6 +178,22 @@ router.post('/webhook', async (req, res) => {
           
           if (user) {
             console.log(`✅ Utilisateur ${user.email} est maintenant VIP !`);
+            
+            // 🎉 ENVOYER NOTIFICATION ADMIN SUR IPHONE
+            await sendAdminNotification(
+              '🎉 NOUVEAU CLIENT VIP !',
+              `
+                <h2>💰 Paiement reçu !</h2>
+                <p><strong>Nouveau client VIP :</strong> ${user.email}</p>
+                <p><strong>Montant :</strong> 10.00€/mois</p>
+                <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
+                <p><strong>Session ID :</strong> ${session.id}</p>
+                <br>
+                <p><strong>Revenu net :</strong> ~9.60€</p>
+                <br>
+                <a href="https://dashboard.stripe.com/payments" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Voir sur Stripe</a>
+              `
+            );
           } else {
             console.log(`⚠️ Utilisateur ${session.customer_email} non trouvé`);
           }
