@@ -116,12 +116,19 @@ router.post('/customer-portal', authenticateToken, async (req, res) => {
 // Webhook Stripe pour traiter les événements
 router.post('/webhook', async (req, res) => {
   const sig = req.headers['stripe-signature'];
+  
+  console.log('🔍 Webhook reçu - Signature:', sig ? 'YES' : 'NO');
+  console.log('🔍 Webhook reçu - Body type:', typeof req.body);
+  console.log('🔍 Webhook reçu - Body length:', req.body ? req.body.length : 'NULL');
+
   let event;
 
   try {
+    // Utiliser req.body directement (raw buffer)
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    console.log('✅ Webhook signature vérifiée avec succès');
   } catch (err) {
-    console.log(`Erreur signature webhook: ${err.message}`);
+    console.log(`❌ Erreur signature webhook: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 

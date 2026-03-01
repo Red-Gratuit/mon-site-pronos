@@ -13,11 +13,14 @@ const app = express();
 app.use(cors());
 
 // Middleware pour webhooks Stripe (doit être AVANT express.json)
-app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
+app.use('/api/payment/webhook', express.raw({ 
+  type: 'application/json',
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 
-app.use(express.json({verify: (req, res, buf) => {
-  req.rawBody = buf;
-}}));
+app.use(express.json());
 app.use(express.static('public'));
 
 app.use(session({
