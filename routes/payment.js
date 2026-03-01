@@ -3,29 +3,46 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 
-// Configuration de l'email pour les notifications admin
-const adminEmailTransporter = nodemailer.createTransporter({
-  service: 'gmail',
-  auth: {
-    user: process.env.ADMIN_EMAIL,
-    pass: process.env.ADMIN_EMAIL_PASSWORD
-  }
-});
+// Alternative : SendGrid pour les notifications (pas besoin de mot de passe app)
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Fonction pour envoyer une notification admin
+// Fonction pour envoyer une notification admin avec SendGrid
 async function sendAdminNotification(subject, message) {
   try {
-    await adminEmailTransporter.sendMail({
-      from: process.env.ADMIN_EMAIL,
+    const msg = {
       to: process.env.ADMIN_EMAIL,
+      from: 'notifications@ev-prono.com',
       subject: subject,
       html: message
-    });
-    console.log('✅ Notification admin envoyée par email');
+    };
+    
+    await sgMail.send(msg);
+    console.log('✅ Notification admin envoyée par SendGrid');
   } catch (error) {
     console.error('❌ Erreur notification admin:', error);
+    // Fallback : essayer avec nodemailer si SendGrid ne marche pas
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.ADMIN_EMAIL,
+          pass: process.env.ADMIN_EMAIL_PASSWORD
+        }
+      });
+      
+      await transporter.sendMail({
+        from: process.env.ADMIN_EMAIL,
+        to: process.env.ADMIN_EMAIL,
+        subject: subject,
+        html: message
+      });
+      console.log('✅ Notification admin envoyée par Gmail (fallback)');
+    } catch (fallbackError) {
+      console.error('❌ Erreur fallback Gmail:', fallbackError);
+    }
   }
 }
 
