@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 
 // Remplacez avec votre deuxième email
-const DEUXIEME_EMAIL = 'Evannhlb7@gmail.com';
+const DEUXIEME_EMAIL = 'enzo.xr59@gmail.com';
 
 async function ajouterAdmin() {
   try {
