@@ -11,7 +11,13 @@ require('./config/passport');
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+
+// Middleware pour webhooks Stripe (doit être AVANT express.json)
+app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
+
+app.use(express.json({verify: (req, res, buf) => {
+  req.rawBody = buf;
+}}));
 app.use(express.static('public'));
 
 app.use(session({
