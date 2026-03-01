@@ -271,6 +271,7 @@ async function loadPronos() {
 // Ajouter un prono
 async function addProno() {
   const body = {
+    league: 'Match', // Valeur par défaut pour le champ manquant
     match: document.getElementById('match').value.trim(),
     prono: document.getElementById('prono').value.trim(),
     cote: parseFloat(document.getElementById('cote').value),
