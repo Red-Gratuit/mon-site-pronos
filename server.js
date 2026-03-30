@@ -70,4 +70,15 @@ app.get('/api/me', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Serveur sur http://localhost:${PORT}`));
+console.log(`🔧 Démarrage serveur sur port ${PORT}...`);
+console.log(`📍 Bind address: 0.0.0.0`);
+
+try {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
+    console.log(`✅ Application prête !`);
+  });
+} catch (err) {
+  console.error('❌ Erreur démarrage serveur:', err);
+  process.exit(1);
+}
