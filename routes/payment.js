@@ -88,7 +88,7 @@ router.post('/create-checkout', authenticateToken, async (req, res) => {
     }
     
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'paypal'],
       mode: 'subscription',
       line_items: [{
         price: priceId,
