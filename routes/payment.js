@@ -70,19 +70,37 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Route pour créer une session de paiement Stripe
-router.post('/create-checkout', async (req, res) => {
+// Route pour créer une session de paiement Stripe (avec 2 plans)
+router.post('/create-checkout', authenticateToken, async (req, res) => {
   try {
+    const { plan } = req.body; // 'basic' ou 'premium'
+    
+    // Sélectionner le bon Price ID selon le plan
+    let priceId;
+    if (plan === 'premium') {
+      priceId = process.env.STRIPE_PRICE_PREMIUM;
+    } else {
+      priceId = process.env.STRIPE_PRICE_BASIC; // default
+    }
+    
+    if (!priceId) {
+      return res.status(400).json({ error: 'Plan non disponible' });
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [{
-        price: process.env.STRIPE_PRICE_ID,
+        price: priceId,
         quantity: 1,
       }],
       success_url: `${process.env.BASE_URL}/payment/success`,
       cancel_url: `${process.env.BASE_URL}/payment/cancel`,
       customer_email: req.user ? req.user.email : undefined,
+      metadata: {
+        plan: plan || 'basic',
+        userId: req.user ? req.user.id : undefined
+      }
     });
 
     res.json({ url: session.url });
@@ -180,6 +198,9 @@ router.post('/webhook', async (req, res) => {
       const session = event.data.object;
       console.log('Session complétée:', session.id);
       
+      // Récupérer le plan depuis les metadata
+      const plan = session.metadata?.plan || 'basic';
+      
       // Mettre à jour le statut VIP de l'utilisateur
       if (session.customer_email) {
         try {
@@ -187,6 +208,7 @@ router.post('/webhook', async (req, res) => {
             { email: session.customer_email },
             { 
               isVIP: true,
+              vipTier: plan, // 'basic' ou 'premium'
               stripeCustomerId: session.customer,
               stripeSubId: session.subscription
             },
@@ -194,19 +216,19 @@ router.post('/webhook', async (req, res) => {
           );
           
           if (user) {
-            console.log(`✅ Utilisateur ${user.email} est maintenant VIP !`);
+            console.log(`✅ Utilisateur ${user.email} est maintenant VIP ${plan.toUpperCase()} !`);
+            
+            const montant = plan === 'premium' ? '50.00€' : '20.00€';
             
             // 🎉 ENVOYER NOTIFICATION ADMIN SUR IPHONE
             await sendAdminNotification(
-              '🎉 NOUVEAU CLIENT VIP !',
+              `🎉 NOUVEAU CLIENT VIP ${plan.toUpperCase()} !`,
               `
                 <h2>💰 Paiement reçu !</h2>
-                <p><strong>Nouveau client VIP :</strong> ${user.email}</p>
-                <p><strong>Montant :</strong> 10.00€/mois</p>
+                <p><strong>Nouveau client VIP ${plan.toUpperCase()} :</strong> ${user.email}</p>
+                <p><strong>Montant :</strong> ${montant}/mois</p>
                 <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
                 <p><strong>Session ID :</strong> ${session.id}</p>
-                <br>
-                <p><strong>Revenu net :</strong> ~9.60€</p>
                 <br>
                 <a href="https://dashboard.stripe.com/payments" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Voir sur Stripe</a>
               `

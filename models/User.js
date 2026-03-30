@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   username:  String,
   email:     { type: String, required: true, unique: true },
   isVIP:     { type: Boolean, default: false },
+  vipTier:   { type: String, enum: ['basic', 'premium'], default: null }, // niveau d'abonnement
   isAdmin:   { type: Boolean, default: false },
   stripeCustomerId: String,
   stripeSubId:      String,

@@ -748,28 +748,51 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
 
 <!-- MODAL PAIEMENT VIP -->
 <div class="modal-bg" id="modal-payment">
-  <div class="modal">
+  <div class="modal" style="max-width:600px;">
     <button class="modal-close" onclick="closeModal('modal-payment')">✕</button>
-    <h3>⭐ Devenir membre VIP</h3>
-    <p>Accède aux pronos exclusifs et analyses complètes.</p>
-    <div style="background:var(--dark);border-radius:12px;padding:20px;margin-bottom:20px;">
-      <div style="font-size:2rem;font-weight:900;color:var(--gold)">10,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
-      <div style="color:var(--muted);font-size:0.82rem;margin-top:4px;">Annulation à tout moment · Sans engagement</div>
-      <ul class="perks" style="margin-top:14px;">
-        <li><span>✓</span> Pronos VIP quotidiens avec analyses</li>
-        <li><span>✓</span> Taux de réussite moyen 74%</li>
-        <li><span>✓</span> Alertes en temps réel</li>
-        <li><span>✓</span> Historique complet 12 mois</li>
-      </ul>
+    <h3>⭐ Choisissez votre abonnement VIP</h3>
+    <p>Accède aux pronostics exclusifs et analyses complètes.</p>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0;">
+      <!-- Plan Basic -->
+      <div style="background:var(--dark);border-radius:12px;padding:20px;border:2px solid var(--border);cursor:pointer;transition:all 0.3s;" 
+           onmouseover="this.style.borderColor='var(--primary)'" 
+           onmouseout="this.style.borderColor='var(--border)'"
+           onclick="goToStripe('basic')">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:10px;">VIP Basic</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--gold)">20,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
+        <div style="color:var(--muted);font-size:0.8rem;margin:10px 0;">Accès aux pronostics VIP essentiels</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:0.85rem;">
+          <li style="margin:5px 0;">✓ Pronos VIP (1-2/jour)</li>
+          <li style="margin:5px 0;">✓ Analyses détaillées</li>
+          <li style="margin:5px 0;">✓ Taux de réussite 74%</li>
+          <li style="margin:5px 0;">✓ Alertes temps réel</li>
+        </ul>
+        <button class="btn-full btn-primary-full" style="margin-top:15px;background:var(--gold);color:#000;">💳 Choisir Basic</button>
+      </div>
+      
+      <!-- Plan Premium -->
+      <div style="background:var(--dark);border-radius:12px;padding:20px;border:2px solid var(--primary);position:relative;overflow:hidden;cursor:pointer;transition:all 0.3s;"
+           onmouseover="this.style.transform='scale(1.02)'" 
+           onmouseout="this.style.transform='scale(1)'"
+           onclick="goToStripe('premium')">
+        <div style="position:absolute;top:0;right:0;background:var(--primary);color:#fff;padding:5px 15px;font-size:0.75rem;font-weight:700;border-radius:0 0 0 10px;">POPULAIRE</div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:10px;">VIP Ultra</div>
+        <div style="font-size:2rem;font-weight:900;color:var(--primary)">50,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
+        <div style="color:var(--muted);font-size:0.8rem;margin:10px 0;">Formation + accompagnement inclus</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:0.85rem;">
+          <li style="margin:5px 0;">✓ Tous les pronos VIP (3-5/jour)</li>
+          <li style="margin:5px 0;">✓ Formation entrepreneur complète</li>
+          <li style="margin:5px 0;">✓ Accompagnement personnalisé</li>
+          <li style="margin:5px 0;">✓ Coaching mensuel</li>
+        </ul>
+        <button class="btn-full btn-primary-full" style="margin-top:15px;">💳 Choisir Ultra</button>
+      </div>
     </div>
-    <button class="btn-full btn-primary-full" onclick="goToStripe()">💳 Payer avec Stripe</button>
-    <div class="payment-icons" style="margin-top:14px;">
-      <span class="pay-icon">💳 Carte</span>
-      <span class="pay-icon">🅿️ PayPal</span>
-      <span class="pay-icon">🍎 Apple Pay</span>
-      <span class="pay-icon">🤖 Google Pay</span>
+    
+    <div style="text-align:center;color:var(--muted);font-size:0.75rem;">
+      Annulation à tout moment · Sans engagement · 🔒 Paiement sécurisé par Stripe
     </div>
-    <p style="text-align:center;margin-top:12px;font-size:0.75rem;color:var(--muted)">🔒 Paiement sécurisé par Stripe</p>
   </div>
 </div>
 
@@ -840,7 +863,7 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
   <h1>Pronostics Football<br/><span>Analyse & Expertise</span></h1>
   <p>Des pronos détaillés chaque jour, avec un taux de réussite de 74%. Accède aux analyses VIP et maximise tes gains.</p>
   <div id="hero-ctas-guest" class="hero-ctas">
-    <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Rejoindre VIP — 10,00€/mois</button>
+    <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Rejoindre VIP — Dès 20€/mois</button>
     <button class="btn-hero-secondary" onclick="openModal('modal-login')">📊 Déjà membre ? Connexion</button>
   </div>
   <div id="hero-ctas-vip" style="display:none">
@@ -975,8 +998,17 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
         <div class="lock-icon-box">🔒</div>
         <h4>Accès réservé aux membres VIP</h4>
         <p>Rejoins nos membres et accède aux pronos exclusifs avec analyses détaillées et statistiques avancées.</p>
-        <div class="price-amount">10,00€</div>
-        <div class="price-period">par mois · Annulation à tout moment</div>
+        <div style="display:flex;gap:20px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
+          <div style="text-align:center;padding:15px;background:var(--card);border-radius:12px;border:2px solid var(--border);">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--gold)">20€</div>
+            <div style="font-size:0.8rem;color:var(--muted);">/mois · Basic</div>
+          </div>
+          <div style="text-align:center;padding:15px;background:var(--card);border-radius:12px;border:2px solid var(--primary);">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--primary)">50€</div>
+            <div style="font-size:0.8rem;color:var(--muted);">/mois · Ultra</div>
+          </div>
+        </div>
+        <div class="price-period">Annulation à tout moment · Sans engagement</div>
         <ul class="perks">
           <li><span>✓</span> Pronos VIP quotidiens avec analyses détaillées</li>
           <li><span>✓</span> Taux de réussite moyen 74% sur les pronos VIP</li>
@@ -1373,16 +1405,18 @@ function logout() {
   window.location.href = '/auth/logout';
 }
 
-function goToStripe() {
+function goToStripe(plan = 'basic') {
   closeModal('modal-payment');
   showToast('🔄 Redirection vers Stripe...', 'info');
   
-  // Faire une requête POST pour créer la session
+  // Faire une requête POST pour créer la session avec le plan choisi
   fetch('/api/payment/create-checkout', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TOKEN}`
+    },
+    body: JSON.stringify({ plan: plan }) // 'basic' ou 'premium'
   })
   .then(response => response.json())
   .then(data => {
