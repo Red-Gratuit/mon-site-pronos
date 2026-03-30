@@ -876,9 +876,9 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
 <!-- STATS BAR -->
 <div class="stats-bar" id="stats-anchor">
   <div class="stat-item"><div class="stat-num gold" id="stat-success-rate">74%</div><div class="stat-lab">Taux de réussite</div></div>
-  <div class="stat-item"><div class="stat-num green" id="stat-total-pronos">0</div><div class="stat-lab">Pronostics</div></div>
-  <div class="stat-item"><div class="stat-num blue" id="stat-wins">0</div><div class="stat-lab">Gagnés</div></div>
-  <div class="stat-item"><div class="stat-num red" id="stat-losses">0</div><div class="stat-lab">Perdus</div></div>
+  <div class="stat-item"><div class="stat-num green" id="stat-total-pronos">129</div><div class="stat-lab">Pronostics</div></div>
+  <div class="stat-item"><div class="stat-num blue" id="stat-wins">97</div><div class="stat-lab">Gagnés</div></div>
+  <div class="stat-item"><div class="stat-num red" id="stat-losses">32</div><div class="stat-lab">Perdus</div></div>
   <div class="stat-item"><div class="stat-num purple" id="stat-members">158</div><div class="stat-lab">Membres VIP</div></div>
 </div>
 
@@ -1199,7 +1199,7 @@ async function init() {
           <div style="text-align:center;">
             <h3 style="color:var(--text);margin-bottom:15px;">👤 Bienvenue ${user.username} !</h3>
             <p style="color:var(--muted);margin-bottom:20px;">Vous êtes connecté en tant que membre Standard</p>
-            <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Devenir VIP — 10,00€/mois</button>
+            <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Devenir VIP — 20,00€/mois</button>
           </div>
         `;
         heroContainer.appendChild(customMessage);
