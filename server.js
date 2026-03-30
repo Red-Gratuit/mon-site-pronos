@@ -69,16 +69,23 @@ app.get('/api/me', (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 8080;
-console.log(`🔧 Démarrage serveur sur port ${PORT}...`);
-console.log(`📍 Bind address: 0.0.0.0`);
+// Health check pour Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
-try {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
-    console.log(`✅ Application prête !`);
-  });
-} catch (err) {
-  console.error('❌ Erreur démarrage serveur:', err);
+const PORT = process.env.PORT || 8080;
+const HOST = process.env.HOST || '0.0.0.0';
+
+console.log(`🔧 Configuration: PORT=${PORT}, HOST=${HOST}`);
+console.log(`� Démarrage serveur...`);
+
+const server = app.listen(PORT, HOST, () => {
+  console.log(`🚀 Serveur démarré sur http://${HOST}:${PORT}`);
+  console.log(`✅ Application prête sur le port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ Erreur serveur:', err);
   process.exit(1);
-}
+});
