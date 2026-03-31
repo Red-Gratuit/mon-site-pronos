@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Prono  = require('../models/Prono');
+const Combine = require('../models/Combine');
 const { auth, isAdmin, isVIP } = require('../middleware/auth');
 
 // Pronos publics
@@ -124,6 +125,85 @@ router.delete('/:id', auth, isAdmin, async (req, res) => {
   try {
     await Prono.findByIdAndDelete(req.params.id);
     res.json({ message: 'Supprimé ✅' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ========== PARIS COMBINÉS ==========
+
+// Récupérer tous les combinés (publics)
+router.get('/combines/public', async (req, res) => {
+  try {
+    const combines = await Combine.find({ type: 'public' }).sort({ createdAt: -1 });
+    res.json(combines);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Récupérer tous les combinés VIP
+router.get('/combines/vip', auth, isVIP, async (req, res) => {
+  try {
+    const combines = await Combine.find({ type: 'vip' }).sort({ createdAt: -1 });
+    res.json(combines);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Tous les combinés (admin)
+router.get('/combines/all', auth, isAdmin, async (req, res) => {
+  try {
+    const combines = await Combine.find().sort({ createdAt: -1 });
+    res.json(combines);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Ajouter un combiné (admin)
+router.post('/combines/add', auth, isAdmin, async (req, res) => {
+  try {
+    const { title, description, type, pronos, miseConseillee, tag } = req.body;
+    
+    if (!title || !pronos || pronos.length < 2) {
+      return res.status(400).json({ error: 'Titre et au moins 2 pronos requis' });
+    }
+    
+    const combine = new Combine({
+      title,
+      description,
+      type: type || 'vip',
+      pronos,
+      miseConseillee: miseConseillee || 10,
+      tag: tag || '',
+      publishedBy: req.user.email
+    });
+    
+    await combine.save();
+    res.status(201).json(combine);
+  } catch (err) {
+    console.error('❌ Erreur création combiné:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Modifier un combiné (admin)
+router.put('/combines/:id', auth, isAdmin, async (req, res) => {
+  try {
+    const combine = await Combine.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(combine);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Supprimer un combiné (admin)
+router.delete('/combines/:id', auth, isAdmin, async (req, res) => {
+  try {
+    await Combine.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Combiné supprimé ✅' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

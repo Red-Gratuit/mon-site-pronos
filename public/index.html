@@ -405,7 +405,13 @@ input[type="text"],input[type="email"],input[type="password"],textarea{font-size
 .status-losing{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2);}
 .status-pending{background:rgba(240,165,0,0.1);color:var(--gold);border:1px solid rgba(240,165,0,0.2);}
 
-/* ADMIN PANEL */
+/* COMBINE FORM */
+.combine-prono-item{display:grid;grid-template-columns:2fr 1fr 2fr 1fr auto;gap:10px;margin-bottom:10px;align-items:center;}
+.combine-prono-item input{padding:10px;border-radius:8px;border:1px solid var(--border-light);background:var(--card);color:var(--text);}
+@media(max-width:768px){
+  .combine-prono-item{grid-template-columns:1fr;gap:5px;}
+  .combine-prono-item input{width:100%;}
+}
 .admin-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:0 auto 40px;max-width:1100px;padding:0 20px;}
 .admin-header{background:linear-gradient(135deg,#0e1220,#12151f);border-bottom:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;gap:10px;}
 .admin-header h3{font-size:1rem;font-weight:700;color:var(--gold);}
@@ -894,12 +900,32 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
       <div class="empty-state"><div class="empty-icon">📭</div><p>Aucun prono public pour le moment.<br/>Reviens bientôt !</p></div>
     </div>
 
+    <!-- COMBINÉS PUBLICS -->
+    <div style="margin-top:32px;">
+      <div class="sec-title">
+        <h3>🎯 Combinés Publics</h3>
+      </div>
+      <div class="pronos-list" id="combines-public">
+        <div class="empty-state"><div class="empty-icon">🎯</div><p>Aucun combiné public pour le moment.</p></div>
+      </div>
+    </div>
+
     <div id="section-vip" style="display:none;margin-top:32px;">
       <div class="sec-title">
         <h3>⭐ Pronos VIP Exclusifs <span class="sec-badge badge-count" id="vip-count">0 aujourd'hui</span></h3>
       </div>
       <div class="pronos-list" id="pronos-vip">
         <div class="empty-state"><div class="empty-icon">⭐</div><p>Aucun prono VIP pour le moment.</p></div>
+      </div>
+      
+      <!-- COMBINÉS VIP -->
+      <div style="margin-top:32px;">
+        <div class="sec-title">
+          <h3>🎯 Combinés VIP</h3>
+        </div>
+        <div class="pronos-list" id="combines-vip">
+          <div class="empty-state"><div class="empty-icon">🎯</div><p>Aucun combiné VIP pour le moment.</p></div>
+        </div>
       </div>
       
       <!-- BONUS SECTION VIP -->
@@ -1059,6 +1085,7 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
     <div class="tabs">
       <button class="tab active" onclick="showTab('tab-add',this)">➕ Nouveau prono</button>
       <button class="tab" onclick="showTab('tab-manage',this)">📋 Gérer les pronos</button>
+      <button class="tab" onclick="showTab('tab-combine',this)">🎯 Combinés</button>
       <button class="tab" onclick="window.open('/admin-mobile', '_blank')">📱 Admin Mobile</button>
     </div>
     <div id="tab-add">
@@ -1089,6 +1116,47 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
     <div id="tab-manage" style="display:none">
       <div id="admin-table-wrap">
         <div class="empty-state"><div class="empty-icon">📋</div><p>Aucun prono publié pour le moment.</p></div>
+      </div>
+    </div>
+    
+    <div id="tab-combine" style="display:none">
+      <div class="admin-form">
+        <input type="text" id="c-title" placeholder="Titre du combiné (ex: Combiné du jour)" class="full"/>
+        <input type="text" id="c-description" placeholder="Description (optionnel)" class="full"/>
+        <select id="c-type">
+          <option value="public">🌍 Public</option>
+          <option value="vip">⭐ VIP</option>
+        </select>
+        <select id="c-tag">
+          <option value="">Aucun tag</option>
+          <option value="hot">🔥 Hot</option>
+          <option value="sure">✓ Sûr</option>
+        </select>
+        <input type="number" id="c-mise" placeholder="Mise conseillée (€)" value="10" step="1"/>
+      </div>
+      
+      <h4 style="margin:20px 0 10px;">📌 Pronos du combiné (min 2)</h4>
+      <div id="combine-pronos-list">
+        <div class="combine-prono-item">
+          <input type="text" placeholder="Match" class="c-match"/>
+          <input type="text" placeholder="Ligue" class="c-league"/>
+          <input type="text" placeholder="Pronostic" class="c-prono"/>
+          <input type="number" placeholder="Cote" class="c-cote" step="0.01"/>
+        </div>
+        <div class="combine-prono-item">
+          <input type="text" placeholder="Match" class="c-match"/>
+          <input type="text" placeholder="Ligue" class="c-league"/>
+          <input type="text" placeholder="Pronostic" class="c-prono"/>
+          <input type="number" placeholder="Cote" class="c-cote" step="0.01"/>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="addCombinePronoRow()" style="margin:10px 0;">➕ Ajouter un prono</button>
+      
+      <button class="btn-publish full" onclick="addCombine()" style="margin-top:20px;">🚀 Publier le combiné</button>
+      
+      <h4 style="margin:30px 0 10px;">📋 Combinés publiés</h4>
+      <div id="combines-table-wrap">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>Aucun combiné publié pour le moment.</p></div>
       </div>
     </div>
   </div>
@@ -1172,6 +1240,7 @@ async function init() {
       document.getElementById('btn-portal').style.display   = 'inline-block';
       document.getElementById('mobile-btn-portal').style.display = 'block';
       loadVIPPronos();
+      loadVIPCombines();
       
       if (user.isAdmin) {
         document.getElementById('admin-panel').style.display = 'block';
@@ -1236,6 +1305,7 @@ async function init() {
   }
 
   loadPublicPronos();
+  loadPublicCombines();
   updateStats();
 }
 
@@ -1262,6 +1332,67 @@ async function loadVIPPronos() {
       : `<div class="empty-state"><div class="empty-icon">⭐</div><p>Aucun prono VIP pour le moment.</p></div>`;
     document.getElementById('vip-count').textContent = `${pronos.length} aujourd'hui`;
   } catch(e) { console.error(e); }
+}
+
+async function loadPublicCombines() {
+  try {
+    const res = await fetch(`${API}/api/pronos/combines/public`);
+    const combines = await res.json();
+    const el = document.getElementById('combines-public');
+    if (el) {
+      el.innerHTML = combines.length
+        ? combines.map(renderCombineCard).join('')
+        : `<div class="empty-state"><div class="empty-icon">🎯</div><p>Aucun combiné public pour le moment.</p></div>`;
+    }
+  } catch(e) { console.error('Erreur chargement combinés publics:', e); }
+}
+
+async function loadVIPCombines() {
+  try {
+    const res = await fetch(`${API}/api/pronos/combines/vip`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const combines = await res.json();
+    const el = document.getElementById('combines-vip');
+    if (el) {
+      el.innerHTML = combines.length
+        ? combines.map(renderCombineCard).join('')
+        : `<div class="empty-state"><div class="empty-icon">🎯</div><p>Aucun combiné VIP pour le moment.</p></div>`;
+    }
+  } catch(e) { console.error('Erreur chargement combinés VIP:', e); }
+}
+
+function renderCombineCard(c) {
+  const tagHtml = c.tag === 'hot' ? '<span class="tag tag-hot">🔥 Hot</span>' :
+                  c.tag === 'sure' ? '<span class="tag tag-sure">✓ Sûr</span>' : '';
+  const vipTag = c.type === 'vip' ? '<span class="tag tag-vip">⭐ VIP</span>' : '';
+  const gainPotentiel = (c.miseConseillee * (c.coteTotale || 0)).toFixed(2);
+  
+  return `
+    <div class="prono-card ${c.type === 'vip' ? 'vip-card' : ''}" style="border-left:4px solid var(--gold);">
+      <div class="card-top">
+        <div class="card-league">🎯 Combiné</div>
+        <div class="card-tags">${vipTag}${tagHtml}</div>
+      </div>
+      <div class="card-match" style="font-size:1.1rem;">${c.title}</div>
+      ${c.description ? `<div style="color:var(--text-dim);font-size:0.9rem;margin-bottom:10px;">${c.description}</div>` : ''}
+      <div style="background:var(--card2);border-radius:10px;padding:15px;margin:15px 0;">
+        <h4 style="margin-bottom:10px;color:var(--gold);">📌 Pronos inclus :</h4>
+        ${c.pronos.map((p, i) => `
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light);${p.resultat === 'gagnant' ? 'background:rgba(0,255,136,0.1);' : p.resultat === 'perdant' ? 'background:rgba(255,68,68,0.1);' : ''}">
+            <span>${i+1}. ${p.match} - ${p.prono}</span>
+            <span style="color:var(--gold);font-weight:700;">${p.cote}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="card-footer" style="flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+          <div>Cote totale: <span class="cote-val" style="font-size:1.1rem;">${c.coteTotale?.toFixed(2) || '-'}</span></div>
+          <div>Mise: <span style="color:var(--text);">${c.miseConseillee}€</span></div>
+          <div>Gain potentiel: <span style="color:var(--green);font-weight:700;">${gainPotentiel}€</span></div>
+        </div>
+      </div>
+    </div>`;
 }
 
 async function loadAdminTable() {
@@ -1360,6 +1491,158 @@ async function deleteProno(id) {
   });
   showToast('🗑️ Prono supprimé', 'info');
   loadPublicPronos(); loadVIPPronos(); loadAdminTable(); updateStats();
+}
+
+// ========== FONCTIONS COMBINÉS ==========
+
+function addCombinePronoRow() {
+  const container = document.getElementById('combine-pronos-list');
+  const row = document.createElement('div');
+  row.className = 'combine-prono-item';
+  row.innerHTML = `
+    <input type="text" placeholder="Match" class="c-match"/>
+    <input type="text" placeholder="Ligue" class="c-league"/>
+    <input type="text" placeholder="Pronostic" class="c-prono"/>
+    <input type="number" placeholder="Cote" class="c-cote" step="0.01"/>
+    <button class="btn btn-logout" onclick="this.parentElement.remove()" style="padding:5px 10px;">❌</button>
+  `;
+  container.appendChild(row);
+}
+
+async function addCombine() {
+  const title = document.getElementById('c-title').value.trim();
+  const description = document.getElementById('c-description').value.trim();
+  const type = document.getElementById('c-type').value;
+  const tag = document.getElementById('c-tag').value;
+  const miseConseillee = parseFloat(document.getElementById('c-mise').value) || 10;
+  
+  // Récupérer tous les pronos
+  const pronoRows = document.querySelectorAll('.combine-prono-item');
+  const pronos = [];
+  
+  pronoRows.forEach(row => {
+    const match = row.querySelector('.c-match').value.trim();
+    const league = row.querySelector('.c-league').value.trim();
+    const prono = row.querySelector('.c-prono').value.trim();
+    const cote = parseFloat(row.querySelector('.c-cote').value);
+    
+    if (match && prono && cote) {
+      pronos.push({ match, league, prono, cote });
+    }
+  });
+  
+  if (!title) {
+    showToast('❌ Titre requis', 'error');
+    return;
+  }
+  
+  if (pronos.length < 2) {
+    showToast('❌ Minimum 2 pronos requis', 'error');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/pronos/combines/add`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${TOKEN}` 
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        type,
+        tag,
+        miseConseillee,
+        pronos
+      })
+    });
+    
+    if (res.ok) {
+      showToast('✅ Combiné publié !', 'success');
+      // Reset form
+      document.getElementById('c-title').value = '';
+      document.getElementById('c-description').value = '';
+      document.getElementById('c-mise').value = '10';
+      document.getElementById('c-type').value = 'vip';
+      document.getElementById('c-tag').value = '';
+      
+      // Reset prono rows
+      const container = document.getElementById('combine-pronos-list');
+      container.innerHTML = `
+        <div class="combine-prono-item">
+          <input type="text" placeholder="Match" class="c-match"/>
+          <input type="text" placeholder="Ligue" class="c-league"/>
+          <input type="text" placeholder="Pronostic" class="c-prono"/>
+          <input type="number" placeholder="Cote" class="c-cote" step="0.01"/>
+        </div>
+        <div class="combine-prono-item">
+          <input type="text" placeholder="Match" class="c-match"/>
+          <input type="text" placeholder="Ligue" class="c-league"/>
+          <input type="text" placeholder="Pronostic" class="c-prono"/>
+          <input type="number" placeholder="Cote" class="c-cote" step="0.01"/>
+        </div>
+      `;
+      
+      loadCombinesAdmin();
+    } else {
+      const err = await res.json();
+      showToast('❌ ' + (err.error || 'Erreur'), 'error');
+    }
+  } catch(e) {
+    showToast('❌ Erreur serveur', 'error');
+  }
+}
+
+async function loadCombinesAdmin() {
+  try {
+    const res = await fetch(`${API}/api/pronos/combines/all`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const combines = await res.json();
+    
+    const container = document.getElementById('combines-table-wrap');
+    
+    if (!combines.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>Aucun combiné publié.</p></div>`;
+      return;
+    }
+    
+    container.innerHTML = `
+      <table class="admin-table">
+        <thead><tr>
+          <th>Titre</th><th>Cote</th><th>Type</th><th>Pronos</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${combines.map(c => `
+            <tr>
+              <td><strong>${c.title}</strong>${c.description ? `<br><small>${c.description}</small>` : ''}</td>
+              <td><span class="cote-val">${c.coteTotale?.toFixed(2) || '-'}</span></td>
+              <td>${c.type === 'vip' ? '<span class="tag tag-vip">⭐ VIP</span>' : '<span class="tag">🌍 Public</span>'}</td>
+              <td>${c.pronos?.length || 0} pronos</td>
+              <td>
+                <div class="mobile-actions">
+                  <button class="a-btn a-del" onclick="deleteCombine('${c._id}')">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  } catch(e) { 
+    console.error('Erreur chargement combinés:', e);
+  }
+}
+
+async function deleteCombine(id) {
+  if (!confirm('Supprimer ce combiné ?')) return;
+  
+  await fetch(`${API}/api/pronos/combines/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${TOKEN}` }
+  });
+  showToast('🗑️ Combiné supprimé', 'info');
+  loadCombinesAdmin();
 }
 
 async function updateStats() {
@@ -2202,7 +2485,7 @@ function updateStatsBar(stats) {
 }
 
 function showTab(id, btn) {
-  ['tab-add','tab-manage'].forEach(t => document.getElementById(t).style.display = 'none');
+  ['tab-add','tab-manage','tab-combine'].forEach(t => document.getElementById(t).style.display = 'none');
   document.getElementById(id).style.display = 'block';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
@@ -2210,6 +2493,8 @@ function showTab(id, btn) {
   // Charger les données spécifiques au tab
   if (id === 'tab-manage') {
     loadAdminTable();
+  } else if (id === 'tab-combine') {
+    loadCombinesAdmin();
   }
 }
 async function login(email, password) {

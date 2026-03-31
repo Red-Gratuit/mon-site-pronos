@@ -81,4 +81,36 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+// Changer le mot de passe
+router.post('/change-password', authenticateToken, async (req, res) => {
+  try {
+    const { password } = req.body;
+    
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: 'Mot de passe trop court (min 6 caractères)' });
+    }
+    
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    await User.findByIdAndUpdate(req.user.id, { password: hashedPassword });
+    
+    res.json({ success: true, message: 'Mot de passe mis à jour' });
+  } catch (error) {
+    console.error('Erreur changement mot de passe:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Supprimer le compte
+router.delete('/delete', authenticateToken, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id);
+    res.json({ success: true, message: 'Compte supprimé définitivement' });
+  } catch (error) {
+    console.error('Erreur suppression compte:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;
