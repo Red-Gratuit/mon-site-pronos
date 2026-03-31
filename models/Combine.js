@@ -11,7 +11,7 @@ const CombineSchema = new mongoose.Schema({
     cote: { type: Number, required: true },
     resultat: { type: String, enum: ['pending', 'gagnant', 'perdant'], default: 'pending' }
   }],
-  coteTotale: { type: Number, required: true },
+  coteTotale: { type: Number },
   miseConseillee: { type: Number, default: 10 },
   gainPotentiel: { type: Number },
   tag: { type: String, enum: ['', 'hot', 'sure'], default: '' },
