@@ -43,7 +43,7 @@ router.get('/all', auth, isAdmin, async (req, res) => {
   }
 });
 
-// Ajouter un prono (admin)
+// Ajouter un prono (admin uniquement)
 router.post('/add', auth, isAdmin, async (req, res) => {
   try {
     console.log('🔍 ADD PRONO - Données reçues:', req.body);
@@ -162,7 +162,7 @@ router.get('/combines/all', auth, isAdmin, async (req, res) => {
   }
 });
 
-// Ajouter un combiné (admin)
+// Ajouter un combiné (admin uniquement)
 router.post('/combines/add', auth, isAdmin, async (req, res) => {
   try {
     const { title, description, type, pronos, miseConseillee, tag } = req.body;

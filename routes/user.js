@@ -56,7 +56,42 @@ router.post('/update-username', authenticateToken, async (req, res) => {
   }
 });
 
-// Obtenir les informations de l'utilisateur
+// Liste des emails admin autorisés
+const ADMIN_EMAILS = [
+  'enzo.xr59@gmail.com',
+  'afkiranis0605@gmail.com',
+  'timeodujardin25@gmail.com'
+];
+
+// Setup automatique des admins à la connexion
+router.post('/setup-admin', authenticateToken, async (req, res) => {
+  try {
+    const userEmail = req.user.email.toLowerCase();
+    
+    if (ADMIN_EMAILS.includes(userEmail)) {
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { isAdmin: true },
+        { new: true }
+      );
+      
+      return res.json({ 
+        success: true, 
+        isAdmin: true,
+        message: 'Vous êtes maintenant admin'
+      });
+    }
+    
+    res.json({ 
+      success: false, 
+      isAdmin: req.user.isAdmin || false,
+      message: 'Vous n\'êtes pas dans la liste des admins'
+    });
+  } catch (error) {
+    console.error('Erreur setup admin:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-stripeCustomerId -stripeSubId');

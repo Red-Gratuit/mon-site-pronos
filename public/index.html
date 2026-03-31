@@ -1209,6 +1209,18 @@ function parseJWT(token) {
 async function init() {
   console.log('🔍 INIT - Token brut:', TOKEN);
   
+  // Setup admin automatique
+  if (TOKEN) {
+    try {
+      const res = await fetch('/api/user/setup-admin', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${TOKEN}` }
+      });
+      const data = await res.json();
+      console.log('🔍 Setup admin:', data);
+    } catch(e) { console.log('Setup admin ignoré'); }
+  }
+  
   const user = TOKEN ? parseJWT(TOKEN) : null;
   console.log('🔍 INIT - User parsé:', user);
 
@@ -1590,7 +1602,10 @@ async function addCombine() {
       showToast('❌ ' + (err.error || 'Erreur'), 'error');
     }
   } catch(e) {
-    showToast('❌ Erreur serveur', 'error');
+    console.error('❌ Erreur détaillée:', e);
+    const errorText = await res?.text();
+    console.error('❌ Réponse serveur:', errorText);
+    showToast('❌ Erreur serveur: ' + (e.message || 'inconnue'), 'error');
   }
 }
 
