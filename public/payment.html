@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>The Room - Paiement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#00d4ff;--gold:#ffd700;--green:#00c97a;--red:#ff4757;--dark:#0a0a0a;--darker:#050505;--card:#111;--text:#f5f5f5;--muted:#888;--border:#222}
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    body{background:var(--dark);color:var(--text);line-height:1.6;min-height:100vh}
+    
+    /* NAVBAR */
+    nav{position:fixed;top:0;left:0;right:0;height:70px;background:rgba(10,10,10,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 40px;z-index:1000}
+    .logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:800;color:var(--text)}
+    .logo span{color:var(--primary)}
+    .nav-center{display:flex;gap:30px}
+    .nav-center a{color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.3s}
+    .nav-center a:hover,.nav-center a.active{color:var(--primary)}
+    
+    /* MAIN */
+    main{padding:120px 40px 60px;max-width:1200px;margin:0 auto}
+    
+    h1{font-size:2.5rem;font-weight:800;margin-bottom:20px;text-align:center}
+    h1 span{color:var(--primary)}
+    .subtitle{text-align:center;color:var(--muted);margin-bottom:50px;font-size:1.1rem}
+    
+    /* PAYMENT METHODS */
+    .payment-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;margin-bottom:50px}
+    .payment-card{background:var(--card);border-radius:16px;padding:30px;border:1px solid var(--border);transition:all 0.3s}
+    .payment-card:hover{border-color:var(--primary);transform:translateY(-5px)}
+    .payment-card.featured{border:2px solid var(--gold)}
+    .payment-icon{font-size:3rem;margin-bottom:15px}
+    .payment-title{font-size:1.3rem;font-weight:700;margin-bottom:10px}
+    .payment-desc{color:var(--muted);font-size:0.9rem;margin-bottom:20px}
+    .payment-price{font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:15px}
+    .payment-price.premium{color:var(--primary)}
+    .payment-btn{display:block;width:100%;padding:12px 20px;background:var(--primary);color:var(--dark);border:none;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center;transition:all 0.3s}
+    .payment-btn:hover{background:#00b8d4}
+    .payment-btn.snap{background:var(--card);border:2px solid #FFFC00;color:#FFFC00}
+    .payment-btn.snap:hover{background:#FFFC00;color:var(--dark)}
+    .payment-features{list-style:none;margin-top:20px}
+    .payment-features li{padding:5px 0;color:var(--muted);font-size:0.85rem}
+    .payment-features li:before{content:"✓ ";color:var(--green);font-weight:bold}
+    
+    /* INFO SECTION */
+    .info-section{background:var(--card);border-radius:16px;padding:40px;margin-top:40px;border:1px solid var(--border)}
+    .info-title{font-size:1.5rem;font-weight:700;margin-bottom:25px;display:flex;align-items:center;gap:10px}
+    .info-title span{font-size:1.8rem}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px}
+    .info-item{padding:20px;background:var(--darker);border-radius:12px;border:1px solid var(--border)}
+    .info-item h4{color:var(--primary);margin-bottom:10px;font-size:1rem}
+    .info-item p{color:var(--muted);font-size:0.85rem;line-height:1.5}
+    .snap-highlight{background:rgba(255,252,0,0.1);border:1px solid #FFFC00;padding:20px;border-radius:12px;margin-top:30px}
+    .snap-highlight h4{color:#FFFC00;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+    .snap-highlight p{color:var(--muted);font-size:0.9rem}
+    .snap-usernames{display:flex;gap:15px;margin-top:15px;flex-wrap:wrap}
+    .snap-username{background:#FFFC00;color:var(--dark);padding:8px 16px;border-radius:20px;font-weight:700;font-size:0.9rem}
+    
+    /* FOOTER */
+    footer{border-top:1px solid var(--border);padding:30px 40px;text-align:center;color:var(--muted);font-size:0.8rem;margin-top:60px}
+    .footer-logo{color:var(--gold);font-weight:800;font-size:1rem;margin-bottom:10px}
+    
+    /* MOBILE */
+    @media(max-width:768px){
+      nav{padding:0 20px}
+      .nav-center{display:none}
+      main{padding:100px 20px 40px}
+      h1{font-size:1.8rem}
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">⚽ The<span>Room</span></div>
+    <div class="nav-center">
+      <a href="/">Accueil</a>
+      <a href="/history">Historique</a>
+      <a href="/payment.html" class="active">Paiement</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1>💳 <span>Paiement</span></h1>
+    <p class="subtitle">Choisissez votre méthode de paiement préférée pour rejoindre le VIP</p>
+    
+    <!-- PAYMENT METHODS -->
+    <div class="payment-grid">
+      <!-- STRIPE -->
+      <div class="payment-card featured">
+        <div class="payment-icon">💳</div>
+        <div class="payment-title">Carte Bancaire (Stripe)</div>
+        <div class="payment-desc">Paiement sécurisé instantané. VISA, Mastercard, Apple Pay, Google Pay.</div>
+        <div class="payment-price">20€ / 50€</div>
+        <ul class="payment-features">
+          <li>Paiement instantané</li>
+          <li>Sécurisé par Stripe</li>
+          <li>Accès VIP immédiat</li>
+        </ul>
+        <a href="/" class="payment-btn">🚀 Devenir VIP</a>
+      </div>
+      
+      <!-- PAYPAL -->
+      <div class="payment-card">
+        <div class="payment-icon">🅿️</div>
+        <div class="payment-title">PayPal (via Stripe)</div>
+        <div class="payment-desc">Paiement sécurisé via PayPal sur Stripe. Disponible directement sur la page de paiement.</div>
+        <div class="payment-price premium">20€ / 50€</div>
+        <ul class="payment-features">
+          <li>Paiement PayPal sécurisé</li>
+          <li>Via Stripe Checkout</li>
+          <li>Accès VIP immédiat</li>
+        </ul>
+        <a href="/" class="payment-btn">� Devenir VIP</a>
+      </div>
+      
+      <!-- ESPÈCES -->
+      <div class="payment-card">
+        <div class="payment-icon">💵</div>
+        <div class="payment-title">Espèces - Bruay-la-Buissière</div>
+        <div class="payment-desc">Paiement en espèces en main propre sur Bruay-la-Buissière (62). Contactez-nous sur Snapchat.</div>
+        <div class="payment-price">20€ / 50€</div>
+        <ul class="payment-features">
+          <li>Paiement en main propre</li>
+          <li>Sur Bruay-la-Buissière uniquement</li>
+          <li>Activation VIP immédiate</li>
+        </ul>
+        <a href="https://snapchat.com/add/enzoxr.59" target="_blank" class="payment-btn snap">👻 Contacter sur Snap</a>
+      </div>
+      
+      <!-- PAYSAFECARD -->
+      <div class="payment-card">
+        <div class="payment-icon">🎫</div>
+        <div class="payment-title">Paysafecard</div>
+        <div class="payment-desc">Paiement avec Paysafecard. Envoyez le code sur Snapchat.</div>
+        <div class="payment-price">20€ / 50€</div>
+        <ul class="payment-features">
+          <li>Paiement anonyme</li>
+          <li>Validation sous 24h</li>
+          <li>Accès VIP après vérification</li>
+        </ul>
+        <a href="https://snapchat.com/add/enzoxr.59" target="_blank" class="payment-btn snap">👻 Contacter sur Snap</a>
+      </div>
+    </div>
+    
+    <!-- INFO SECTION -->
+    <div class="info-section">
+      <div class="info-title"><span>ℹ️</span> Informations importantes</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <h4>🔒 Sécurité</h4>
+          <p>Tous les paiements sont sécurisés. Pour Stripe, le traitement est instantané. Pour les autres méthodes, nous validons sous 24h maximum.</p>
+        </div>
+        <div class="info-item">
+          <h4>⚡ Accès VIP</h4>
+          <p>Avec Stripe, vous devenez VIP immédiatement. Pour PayPal, Espèces et Paysafecard, l'accès est activé après validation manuelle.</p>
+        </div>
+        <div class="info-item">
+          <h4>🔄 Remboursement</h4>
+          <p>Pas de remboursement possible une fois le service activé. Testez d'abord nos pronos publics avant de vous engager.</p>
+        </div>
+        <div class="info-item">
+          <h4>📱 Support</h4>
+          <p>Questions ? Contactez-nous sur Snapchat. Réponse garantie sous 2h en journée.</p>
+        </div>
+      </div>
+      
+      <!-- SNAP HIGHLIGHT -->
+      <div class="snap-highlight">
+        <h4>👻 Contact Snapchat pour Espèces (Bruay-la-Buissière) & Paysafecard</h4>
+        <p>Pour ces méthodes de paiement, envoyez-nous un message sur Snapchat avec :</p>
+        <ul style="color:var(--muted);margin:10px 0 0 20px;font-size:0.9rem;">
+          <li>Votre email d'inscription</li>
+          <li>Le plan choisi (Basic 20€ ou Ultra 50€)</li>
+          <li>La méthode de paiement souhaitée</li>
+        </ul>
+        <div class="snap-usernames">
+          <span class="snap-username">enzoxr.59</span>
+          <span class="snap-username">ans5.9</span>
+          <span class="snap-username">timeo_1</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">⚽ The Room</div>
+    <div>Pronostics à titre informatif · Jeu responsable · 18+</div>
+    <div style="margin-top:8px;">👻 Snapchat : enzoxr.59 · ans5.9 · timeo_1</div>
+    <div style="margin-top:10px;">© 2026 The Room</div>
+  </footer>
+</body>
+</html>
