@@ -49,6 +49,12 @@ router.post('/add', auth, isAdmin, async (req, res) => {
     console.log('🔍 ADD PRONO - Données reçues:', req.body);
     console.log('🔍 ADD PRONO - User:', req.user.email, 'isAdmin:', req.user.isAdmin);
     
+    // Vérification admin explicite
+    if (!req.user.isAdmin) {
+      console.log('❌ ADD PRONO - Utilisateur non admin:', req.user.email);
+      return res.status(403).json({ error: 'Accès refusé: admin requis pour créer un prono' });
+    }
+    
     const { league, match, prono, cote, date, type, tag, analyse, resultat } = req.body;
     
     // Validation des champs requis

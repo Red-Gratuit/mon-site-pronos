@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 exports.auth = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -11,12 +12,24 @@ exports.auth = (req, res, next) => {
   }
 };
 
-exports.isAdmin = (req, res, next) => {
-  if (!req.user?.isAdmin) return res.status(403).json({ error: 'Admin requis' });
-  next();
+exports.isAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user?.isAdmin) return res.status(403).json({ error: 'Admin requis' });
+    req.user = user; // Mettre à jour avec les données complètes
+    next();
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur vérification admin' });
+  }
 };
 
-exports.isVIP = (req, res, next) => {
-  if (!req.user?.isVIP && !req.user?.isAdmin) return res.status(403).json({ error: 'VIP requis' });
-  next();
+exports.isVIP = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user?.isVIP && !user?.isAdmin) return res.status(403).json({ error: 'VIP requis' });
+    req.user = user; // Mettre à jour avec les données complètes
+    next();
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur vérification VIP' });
+  }
 };
