@@ -21,11 +21,10 @@ const CombineSchema = new mongoose.Schema({
 });
 
 // Calcul automatique de la cote totale et du gain potentiel
-CombineSchema.pre('save', function(next) {
+CombineSchema.pre('save', async function() {
   this.coteTotale = this.pronos.reduce((acc, p) => acc * p.cote, 1);
   this.gainPotentiel = this.miseConseillee * this.coteTotale;
   this.updatedAt = Date.now();
-  next();
 });
 
 module.exports = mongoose.model('Combine', CombineSchema);
