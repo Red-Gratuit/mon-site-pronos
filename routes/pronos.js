@@ -87,17 +87,8 @@ router.post('/add', auth, isAdmin, async (req, res) => {
     today.setHours(0, 0, 0, 0); // Début d'aujourd'hui à 00:00
     
     let adjustedResultat = resultat || 'pending';
-    if (pronoDate < today) {
-      // Si la date est avant aujourd'hui, forcer en "pending"
-      adjustedResultat = 'pending';
-      console.log('🔄 ADD PRONO - Date passée, résultat forcé en pending');
-    } else if (pronoDate > today) {
-      // Si la date est future, garder le résultat mais ne pas "gagnant" ou "perdant"
-      if (adjustedResultat === 'gagnant' || adjustedResultat === 'perdant') {
-        adjustedResultat = 'pending';
-        console.log('🔄 ADD PRONO - Date future, résultat forcé en pending');
-      }
-    }
+    // Si la date est spécifiée, on l'utilise exactement sans ajustement automatique
+    console.log('� ADD PRONO - Date utilisée:', pronoDate.toLocaleString('fr-FR'));
     
     const pronoData = {
       league: league.trim(),
@@ -139,30 +130,14 @@ router.put('/:id', auth, isAdmin, async (req, res) => {
   try {
     const { resultat, date } = req.body;
     
-    // Ajustement automatique du résultat selon la date
+    // Si la date est spécifiée, on l'utilise exactement
     const pronoDate = date ? new Date(date) : null;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    let adjustedResultat = resultat;
     if (pronoDate) {
-      if (pronoDate < today) {
-        // Si la date est avant aujourd'hui, forcer en "pending"
-        adjustedResultat = 'pending';
-        console.log('🔄 UPDATE PRONO - Date passée, résultat forcé en pending');
-      } else if (pronoDate > today) {
-        // Si la date est future, ne pas "gagnant" ou "perdant"
-        if (adjustedResultat === 'gagnant' || adjustedResultat === 'perdant') {
-          adjustedResultat = 'pending';
-          console.log('🔄 UPDATE PRONO - Date future, résultat forcé en pending');
-        }
-      }
+      console.log('� UPDATE PRONO - Date utilisée:', pronoDate.toLocaleString('fr-FR'));
     }
     
     const updateData = { ...req.body };
-    if (adjustedResultat !== resultat) {
-      updateData.resultat = adjustedResultat;
-    }
+    // Ne pas d'ajustement automatique du résultat - on garde ce qui est envoyé
     
     const prono = await Prono.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(prono);
