@@ -636,6 +636,82 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
   .btn-hero-primary:active{transform:scale(0.97);}
   .modal-close:active{transform:scale(0.9);}
 }
+
+/* SUCCESS POPUP */
+.success-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-popup-content {
+  background: var(--card);
+  border: 2px solid var(--gold);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  max-width: 400px;
+  animation: slideUp 0.4s ease;
+  box-shadow: 0 20px 60px rgba(240,165,0,0.3);
+}
+
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  animation: bounce 0.6s ease infinite alternate;
+}
+
+.success-popup-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.success-popup-content p {
+  color: var(--text);
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.success-details {
+  background: var(--dark);
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
 </style>
 </head>
 <body>
@@ -1474,9 +1550,11 @@ async function addProno() {
       body:    JSON.stringify(body)
     });
     if (res.ok) {
+      const createdProno = await res.json();
       ['a-league','a-match','a-prono','a-cote','a-date','a-analyse','a-tag','a-result'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('a-type').value = 'public';
       showToast('✅ Prono publié !', 'success');
+      showSuccessPopup('prono', `Match: ${createdProno.match}<br>Cote: ${createdProno.cote}<br>Type: ${createdProno.type}`);
       loadAdminTable();
     } else {
       const err = await res.json();
@@ -1571,7 +1649,9 @@ async function addCombine() {
     });
     
     if (res.ok) {
+      const createdCombine = await res.json();
       showToast('✅ Combiné publié !', 'success');
+      showSuccessPopup('combiné', `Titre: ${createdCombine.title}<br>Cote totale: ${createdCombine.coteTotale?.toFixed(2)}<br>Pronos: ${createdCombine.pronos.length}`);
       // Reset form
       document.getElementById('c-title').value = '';
       document.getElementById('c-description').value = '';
@@ -1881,6 +1961,23 @@ function toggleMobileMenu() {
       mobileMenu.classList.remove('active');
     });
   });
+}
+
+// Pop-up de confirmation pour publication réussie
+function showSuccessPopup(type, details) {
+  const popup = document.createElement('div');
+  popup.className = 'success-popup';
+  popup.innerHTML = `
+    <div class="success-popup-content">
+      <div class="success-icon">✨</div>
+      <h3>${type === 'prono' ? '🎯 Prono publié !' : '🎯 Combiné publié !'}</h3>
+      <p>Votre ${type} est maintenant en ligne</p>
+      ${details ? `<div class="success-details">${details}</div>` : ''}
+      <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()">OK</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 5000);
 }
 
 function showToast(msg, type = 'info') {
