@@ -81,16 +81,34 @@ router.post('/add', auth, isAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Le résultat doit être "gagnant", "perdant" ou "pending"' });
     }
     
+    // Ajustement automatique du résultat selon la date
+    const pronoDate = date ? new Date(date) : new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Début d'aujourd'hui à 00:00
+    
+    let adjustedResultat = resultat || 'pending';
+    if (pronoDate < today) {
+      // Si la date est avant aujourd'hui, forcer en "pending"
+      adjustedResultat = 'pending';
+      console.log('🔄 ADD PRONO - Date passée, résultat forcé en pending');
+    } else if (pronoDate > today) {
+      // Si la date est future, garder le résultat mais ne pas "gagnant" ou "perdant"
+      if (adjustedResultat === 'gagnant' || adjustedResultat === 'perdant') {
+        adjustedResultat = 'pending';
+        console.log('🔄 ADD PRONO - Date future, résultat forcé en pending');
+      }
+    }
+    
     const pronoData = {
       league: league.trim(),
       match: match.trim(),
       prono: prono.trim(),
       cote: parseFloat(cote),
-      date: date ? new Date(date) : new Date(),
+      date: pronoDate,
       type: type || 'public',
       tag: tag ? tag.trim() : '',
       analyse: analyse ? analyse.trim() : '',
-      resultat: resultat || 'pending'
+      resultat: adjustedResultat
     };
     
     console.log('✅ ADD PRONO - Données validées:', pronoData);
@@ -119,7 +137,34 @@ router.post('/add', auth, isAdmin, async (req, res) => {
 // Modifier résultat (admin)
 router.put('/:id', auth, isAdmin, async (req, res) => {
   try {
-    const prono = await Prono.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { resultat, date } = req.body;
+    
+    // Ajustement automatique du résultat selon la date
+    const pronoDate = date ? new Date(date) : null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let adjustedResultat = resultat;
+    if (pronoDate) {
+      if (pronoDate < today) {
+        // Si la date est avant aujourd'hui, forcer en "pending"
+        adjustedResultat = 'pending';
+        console.log('🔄 UPDATE PRONO - Date passée, résultat forcé en pending');
+      } else if (pronoDate > today) {
+        // Si la date est future, ne pas "gagnant" ou "perdant"
+        if (adjustedResultat === 'gagnant' || adjustedResultat === 'perdant') {
+          adjustedResultat = 'pending';
+          console.log('🔄 UPDATE PRONO - Date future, résultat forcé en pending');
+        }
+      }
+    }
+    
+    const updateData = { ...req.body };
+    if (adjustedResultat !== resultat) {
+      updateData.resultat = adjustedResultat;
+    }
+    
+    const prono = await Prono.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(prono);
   } catch (err) {
     res.status(500).json({ error: err.message });
