@@ -218,7 +218,7 @@ router.post('/webhook', async (req, res) => {
           if (user) {
             console.log(`✅ Utilisateur ${user.email} est maintenant VIP ${plan.toUpperCase()} !`);
             
-            const montant = plan === 'premium' ? '50.00€' : '20.00€';
+            const montant = plan === 'premium' ? '30.00€' : '10.00€';
             
             // 🎉 ENVOYER NOTIFICATION ADMIN SUR IPHONE
             await sendAdminNotification(
