@@ -842,7 +842,7 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
            onmouseout="this.style.borderColor='var(--border)'"
            onclick="goToStripe('basic')">
         <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:10px;">VIP Basic</div>
-        <div style="font-size:2rem;font-weight:900;color:var(--gold)">20,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
+        <div style="font-size:2rem;font-weight:900;color:var(--gold)">10,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
         <div style="color:var(--muted);font-size:0.8rem;margin:10px 0;">Accès aux pronostics VIP essentiels</div>
         <ul style="list-style:none;padding:0;margin:0;font-size:0.85rem;">
           <li style="margin:5px 0;">✓ Pronos VIP (1-2/jour)</li>
@@ -860,7 +860,7 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
            onclick="goToStripe('premium')">
         <div style="position:absolute;top:0;right:0;background:var(--primary);color:#fff;padding:5px 15px;font-size:0.75rem;font-weight:700;border-radius:0 0 0 10px;">POPULAIRE</div>
         <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:10px;">VIP Ultra</div>
-        <div style="font-size:2rem;font-weight:900;color:var(--primary)">50,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
+        <div style="font-size:2rem;font-weight:900;color:var(--primary)">30,00€<span style="font-size:1rem;color:var(--muted)">/mois</span></div>
         <div style="color:var(--muted);font-size:0.8rem;margin:10px 0;">Formation + accompagnement inclus</div>
         <ul style="list-style:none;padding:0;margin:0;font-size:0.85rem;">
           <li style="margin:5px 0;">✓ Tous les pronos VIP (3-5/jour)</li>
@@ -947,7 +947,7 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
   <h1>Pronostics Football<br/><span>Analyse & Expertise</span></h1>
   <p>Des pronos détaillés chaque jour, avec un taux de réussite de 74%. Accède aux analyses VIP et maximise tes gains.</p>
   <div id="hero-ctas-guest" class="hero-ctas">
-    <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Rejoindre VIP — Dès 20€/mois</button>
+    <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Rejoindre VIP — Dès 10€/mois</button>
     <button class="btn-hero-secondary" onclick="openModal('modal-login')">📊 Déjà membre ? Connexion</button>
   </div>
   <div id="hero-ctas-vip" style="display:none">
@@ -1104,11 +1104,11 @@ footer{border-top:1px solid var(--border);padding:30px 40px;display:flex;justify
         <p>Rejoins nos membres et accède aux pronos exclusifs avec analyses détaillées et statistiques avancées.</p>
         <div style="display:flex;gap:20px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
           <div style="text-align:center;padding:15px;background:var(--card);border-radius:12px;border:2px solid var(--border);">
-            <div style="font-size:1.8rem;font-weight:900;color:var(--gold)">20€</div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--gold)">10€</div>
             <div style="font-size:0.8rem;color:var(--muted);">/mois · Basic</div>
           </div>
           <div style="text-align:center;padding:15px;background:var(--card);border-radius:12px;border:2px solid var(--primary);">
-            <div style="font-size:1.8rem;font-weight:900;color:var(--primary)">50€</div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--primary)">30€</div>
             <div style="font-size:0.8rem;color:var(--muted);">/mois · Ultra</div>
           </div>
         </div>
@@ -1361,7 +1361,7 @@ async function init() {
           <div style="text-align:center;">
             <h3 style="color:var(--text);margin-bottom:15px;">👤 Bienvenue ${user.username} !</h3>
             <p style="color:var(--muted);margin-bottom:20px;">Vous êtes connecté en tant que membre Standard</p>
-            <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Devenir VIP — 20,00€/mois</button>
+            <button class="btn-hero-primary" onclick="openModal('modal-payment')">⭐ Devenir VIP — 10,00€/mois</button>
           </div>
         `;
         heroContainer.appendChild(customMessage);
