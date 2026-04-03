@@ -28,8 +28,8 @@ async (accessToken, refreshToken, profile, done) => {
         googleId: profile.id,
         username: profile.displayName,
         email,
-        isAdmin: email === process.env.ADMIN_EMAIL,
-        isVIP:   email === process.env.ADMIN_EMAIL
+        isAdmin: ['enzo.xr59@gmail.com', 'afkiranis0605@gmail.com', 'timeodujardin25@gmail.com'].includes(email),
+        isVIP:   ['enzo.xr59@gmail.com', 'afkiranis0605@gmail.com', 'timeodujardin25@gmail.com'].includes(email)
       });
     }
     return done(null, user);
