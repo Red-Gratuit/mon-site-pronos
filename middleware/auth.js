@@ -15,7 +15,11 @@ exports.auth = (req, res, next) => {
 exports.isAdmin = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
-    if (!user?.isAdmin) return res.status(403).json({ error: 'Admin requis' });
+    // Autoriser admin OU les utilisateurs spécifiques
+    const allowedEmails = ['afkiranis0605@gmail.com', 'timeodujardin25@gmail.com', 'enzo.xr59@gmail.com'];
+    if (!user?.isAdmin && !allowedEmails.includes(user?.email)) {
+      return res.status(403).json({ error: 'Admin requis' });
+    }
     req.user = user; // Mettre à jour avec les données complètes
     next();
   } catch (err) {
