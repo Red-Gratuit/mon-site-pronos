@@ -442,12 +442,54 @@ async function loadCombines() {
           </span>
         </div>
         <div class="prono-actions">
+          <button class="action-btn win" onclick="setCombineResult('${combine._id}', 'gagnant')">✅</button>
+          <button class="action-btn lose" onclick="setCombineResult('${combine._id}', 'perdant')">❌</button>
           <button class="action-btn delete" onclick="deleteCombine('${combine._id}')">🗑️</button>
         </div>
       </div>
     `).join('');
   } catch (error) {
     showToast('Erreur de chargement des combinés', 'error');
+  }
+}
+
+// Mettre à jour le résultat d'un combiné
+async function setCombineResult(id, resultat) {
+  try {
+    // D'abord récupérer le combiné pour avoir tous les pronos
+    const getRes = await fetch(`${API}/api/pronos/combines/all`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const combines = await getRes.json();
+    const combine = combines.find(c => c._id === id);
+    
+    if (!combine) {
+      showToast('❌ Combiné non trouvé', 'error');
+      return;
+    }
+    
+    // Mettre à jour tous les pronos avec le même résultat
+    const updatedPronos = combine.pronos.map(p => ({ ...p, resultat }));
+    
+    const res = await fetch(`${API}/api/pronos/combines/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${TOKEN}` 
+      },
+      body: JSON.stringify({ 
+        pronos: updatedPronos
+      })
+    });
+    
+    if (res.ok) {
+      showToast('✅ Résultat du combiné mis à jour', 'success');
+      loadCombines();
+    } else {
+      showToast('❌ Erreur mise à jour', 'error');
+    }
+  } catch (error) {
+    showToast('❌ Erreur serveur', 'error');
   }
 }
 
